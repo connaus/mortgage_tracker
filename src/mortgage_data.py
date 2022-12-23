@@ -8,9 +8,9 @@ import numpy_financial as npf
 from dateutil.relativedelta import relativedelta
 
 OVERPAYMENT_FILE = Path(
-    r"C:\Users\ste-c\OneDrive\Documents\Mortgage\python_dashboard\source_data\overpayment_record.xlsx"
+    "source_data\\overpayment_record.xlsx"
 )
-MORTGAGE_DATA = Path("python_dashboard\\source_data\\mortgages.json")
+MORTGAGE_DATA = Path("source_data\\mortgages.json")
 
 
 def months_difference(start_date: datetime, end_date: datetime) -> int:

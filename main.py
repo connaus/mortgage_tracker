@@ -7,9 +7,10 @@ from dash_bootstrap_components.themes import BOOTSTRAP
 
 def main():
 
+    m = TotalPaymentRecord()
     app = Dash(external_stylesheets=[BOOTSTRAP])
     app.title = "Mortgage Tracker"
-    app.layout = create_layout(app)
+    app.layout = create_layout(app, m)
     app.run()
 
     """m = TotalPaymentRecord()
