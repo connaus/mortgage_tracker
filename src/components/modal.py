@@ -71,7 +71,33 @@ def render(app: Dash, mortgage_list: list[MortgageAgreement]) -> html.Div:
             Input(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),
         ],
     )
-    def update_modal_text(n1: int, n2: int) -> str:
-        return mortgage_list[n1 - n2].__repr__()
+    def update_modal_text(next: int, prev: int) -> str:
+        return mortgage_list[next - prev].__repr__()
+
+    @app.callback(
+        Output(ids.MORTGAGE_AGREEMENT_MODAL_NEXT, "disabled"),
+        [
+            Input(ids.MORTGAGE_AGREEMENT_MODAL_NEXT, "n_clicks"),
+            Input(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),
+        ],
+    )
+    def toggle_next(next: int, prev: int) -> bool:
+        if (
+            next - prev >= len(mortgage_list) - 2
+        ):  # -2 as we want to exclude "Future" agreement
+            return True
+        return False
+
+    @app.callback(
+        Output(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "disabled"),
+        [
+            Input(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),
+            Input(ids.MORTGAGE_AGREEMENT_MODAL_NEXT, "n_clicks"),
+        ],
+    )
+    def set_previous_click_limit(prev: int, next: int) -> bool:
+        if next - prev <= 0:
+            return True
+        return False
 
     return html.Div(className="modalCentre", children=modal_children(0, mortgage_list))
