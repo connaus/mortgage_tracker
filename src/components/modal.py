@@ -23,7 +23,6 @@ def render(app: Dash, mortgage_list: list[MortgageAgreement]) -> html.Div:
         ],
     )
     def update_modal_text(next: int, prev: int) -> list[html.Div]:
-        # return mortgage_display(mortgage_list[next - prev])
         return [
             html.Div(line) for line in mortgage_list[next - prev].display().split("\n")
         ]
@@ -66,7 +65,6 @@ def render(app: Dash, mortgage_list: list[MortgageAgreement]) -> html.Div:
                     [
                         dbc.ModalHeader(dbc.ModalTitle("Mortgage Details")),
                         dbc.ModalBody(
-                            # mortgage_display(mortgage_list[0]),
                             [
                                 html.Div(line)
                                 for line in mortgage_list[0].display().split("\n")
