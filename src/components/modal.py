@@ -1,4 +1,4 @@
-from dash import Dash, html, dcc, Output, Input, State
+from dash import Dash, html, Output, Input, State
 import dash_bootstrap_components as dbc
 from . import ids
 from ..mortgage_data import MortgageAgreement
@@ -22,8 +22,11 @@ def render(app: Dash, mortgage_list: list[MortgageAgreement]) -> html.Div:
             Input(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),
         ],
     )
-    def update_modal_text(next: int, prev: int) -> str:
-        return mortgage_list[next - prev].__repr__()
+    def update_modal_text(next: int, prev: int) -> list[html.Div]:
+        # return mortgage_display(mortgage_list[next - prev])
+        return [
+            html.Div(line) for line in mortgage_list[next - prev].display().split("\n")
+        ]
 
     @app.callback(
         Output(ids.MORTGAGE_AGREEMENT_MODAL_NEXT, "disabled"),
@@ -63,7 +66,11 @@ def render(app: Dash, mortgage_list: list[MortgageAgreement]) -> html.Div:
                     [
                         dbc.ModalHeader(dbc.ModalTitle("Mortgage Details")),
                         dbc.ModalBody(
-                            mortgage_list[0].__repr__(),
+                            # mortgage_display(mortgage_list[0]),
+                            [
+                                html.Div(line)
+                                for line in mortgage_list[0].display().split("\n")
+                            ],
                             id=ids.MORTGAGE_AGREEMENT_MODAL_BODY,
                         ),
                         dbc.ModalFooter(

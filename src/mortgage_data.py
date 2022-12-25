@@ -18,6 +18,16 @@ def months_difference(start_date: datetime, end_date: datetime) -> int:
         (end_date.year - start_date.year) * 12 + end_date.month - start_date.month
     ) + 1
 
+def duration_str(duration: relativedelta) -> str:
+    text = ''
+    if duration.years:
+        text = text + f'{duration.years} years'
+    if duration.years and duration.months:
+        text = text + ' and '
+    if duration.months:
+        text = text + f'{duration.months} months'
+    text = text + ')'
+    return text
 
 
 class PaymentSchema():
@@ -59,6 +69,17 @@ class MortgageAgreement:
         self.fixed_term_end = self.start_date + relativedelta(
             months=self.fixed_term - 1
         )
+    
+    def display(self) -> str:
+        text = f"Mortgage Name: {self.mortgage_name}"
+        if self.principle_at_start:
+            text = text + f"\nInitial Principle: €{self.principle_at_start:,.2f}"
+        text = text + f"\nInterest Rate: {self.interest_rate * 100}%"
+        text = text + f"\nFixed from {self.start_date.strftime('%B %Y')} to {self.fixed_term_end.strftime('%B %Y')} ("
+        text = text + duration_str(relativedelta(self.fixed_term_end, self.start_date) + relativedelta(months=1))
+        text = text + f"\nTotal term from {self.start_date.strftime('%B %Y')} to {self.end_date.strftime('%B %Y')} ("
+        text = text + duration_str(relativedelta(self.end_date, self.start_date) + relativedelta(months=1))
+        return text
 
 
 def monthly_repayment(
