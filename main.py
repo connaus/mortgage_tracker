@@ -7,22 +7,25 @@ from dash_bootstrap_components.themes import BOOTSTRAP
 
 def main():
 
+    data = TotalPaymentRecord()
     app = Dash(external_stylesheets=[BOOTSTRAP])
     app.title = "Mortgage Tracker"
-    app.layout = create_layout(app)
+    app.layout = create_layout(app, data)
     app.run()
 
     """m = TotalPaymentRecord()
-    mortgage = m.calculate_payments()
+    print(m.total_payment_to_date())
+    print(m.total_interest_payment_to_date())"""
 
-    fig = px.line(
+    """fig = px.line(
         x=mortgage.index,
         y=mortgage[PaymentSchema.principle_at_start],
         markers=True,
         title=PaymentSchema.principle_at_start,
         color=mortgage[PaymentSchema.mortgage_name],
     )
-    fig.show()"""
+    fig.show()
+"""
 
 
 if __name__ == "__main__":
