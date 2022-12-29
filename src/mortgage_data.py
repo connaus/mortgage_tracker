@@ -183,15 +183,6 @@ class TotalPaymentRecord:
             self.payment_record[PaymentSchema.mortgage_name] != "Future"
         ]
 
-    def total_interest_payment_to_date(self) -> float:
-        """returns the total amount paid including current month"""
-        df = self.payment_record[self.payment_record.index < datetime.today()]
-        return df[PaymentSchema.interest_owed].sum()
-
-    def perc_interest_payment_to_date(self) -> float:
-        """calculate percentage of payment to date that has gone to interest"""
-        return self.total_interest_payment_to_date() / self.payment_to_date()
-
     def payment_to_date(self) -> float:
         """returns the total amount paid including current month"""
         df = self.record_to_date()
@@ -225,3 +216,29 @@ class TotalPaymentRecord:
     def perc_mortgage_paid(self) -> float:
         """perc of cost of mortgage already paid"""
         return self.payment_to_date() / self.cost_of_mortgage()
+
+    def interest_payment_to_date(self) -> float:
+        """returns the total amount paid including current month"""
+        df = self.record_to_date()
+        return df[PaymentSchema.interest_owed].sum()
+
+    def perc_interest_payment_to_date(self) -> float:
+        """calculate percentage of payment to date that has gone to interest"""
+        return self.interest_payment_to_date() / self.payment_to_date()
+
+    def interest_payment_agreed(self) -> float:
+        """total interest payment due up to end of latest mortgage agreement"""
+        df = self.record_agreed()
+        return df[PaymentSchema.interest_owed].sum()
+
+    def perc_interest_payment_agreed(self) -> float:
+        """percent of total payment that will go to interest at end of curernt mortgage agreement"""
+        return self.interest_payment_agreed() / self.payment_agreed()
+
+    def total_interest_payment(self) -> float:
+        """total interest to be paid to reduce principle to 0"""
+        return self.payment_record[PaymentSchema.interest_owed].sum()
+
+    def total_perc_interest_payment(self) -> float:
+        """percent of total payment that will go towards interest"""
+        return self.total_interest_payment() / self.cost_of_mortgage()
