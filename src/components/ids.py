@@ -5,3 +5,5 @@ LINE_CHART = "line-chart"
 
 TOTAL_PAYMENTS = "total-payments"
 TOTAL_INTEREST_PAYMENTS = "total-interest-payments"
+
+CURRENT_MONTH_PAYMENT = "current-month-payment"

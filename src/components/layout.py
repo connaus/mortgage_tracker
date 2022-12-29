@@ -6,6 +6,7 @@ from . import (
     data_dropdown,
     payment_totals,
     interest_payment_totals,
+    current_month_payments,
 )
 from ..mortgage_data import TotalPaymentRecord
 
@@ -23,6 +24,7 @@ def create_layout(app: Dash, data: TotalPaymentRecord) -> html.Div:
             line_chart.render(app),
             html.Div(
                 [
+                    current_month_payments.render(data),
                     payment_totals.render(app, data),
                     interest_payment_totals.render(app, data),
                 ],

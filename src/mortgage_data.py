@@ -183,6 +183,11 @@ class TotalPaymentRecord:
             self.payment_record[PaymentSchema.mortgage_name] != "Future"
         ]
 
+    def record_this_month(self) -> pd.Series:
+        return self.payment_record.loc[
+            pd.Timestamp(datetime.today().replace(day=1).date())
+        ]
+
     def payment_to_date(self) -> float:
         """returns the total amount paid including current month"""
         df = self.record_to_date()
@@ -242,3 +247,16 @@ class TotalPaymentRecord:
     def total_perc_interest_payment(self) -> float:
         """percent of total payment that will go towards interest"""
         return self.total_interest_payment() / self.cost_of_mortgage()
+
+    def payment_this_month(self) -> float:
+        """find the amount due this month"""
+        s = self.record_this_month()
+        return s[PaymentSchema.payment_owed]
+
+    def starting_principle_this_month(self) -> float:
+        s = self.record_this_month()
+        return s[PaymentSchema.principle_at_start]
+
+    def ending_principle_this_month(self) -> float:
+        s = self.record_this_month()
+        return s[PaymentSchema.principle_at_end]
