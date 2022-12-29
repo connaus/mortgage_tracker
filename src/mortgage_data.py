@@ -173,10 +173,15 @@ class TotalPaymentRecord:
             record_list.append(MortgagePaymentRecord(mortgage).payment_df)
         return pd.concat(record_list)
 
-    def total_payment_to_date(self) -> float:
-        """returns the total amount paid including current month"""
-        df = self.payment_record[self.payment_record.index < datetime.today()]
-        return df[PaymentSchema.actual_payment].sum()
+    def record_to_date(self) -> pd.DataFrame:
+        """record up to and including current month"""
+        return self.payment_record[self.payment_record.index < datetime.today()]
+
+    def record_agreed(self) -> pd.DataFrame:
+        """record only for months with a mortgage agreement in place"""
+        return self.payment_record[
+            self.payment_record[PaymentSchema.mortgage_name] != "Future"
+        ]
 
     def total_interest_payment_to_date(self) -> float:
         """returns the total amount paid including current month"""
@@ -185,11 +190,38 @@ class TotalPaymentRecord:
 
     def perc_interest_payment_to_date(self) -> float:
         """calculate percentage of payment to date that has gone to interest"""
-        return self.total_interest_payment_to_date() / self.total_payment_to_date()
+        return self.total_interest_payment_to_date() / self.payment_to_date()
 
-    def total_principle_reduction(self) -> float:
-        df = self.payment_record[self.payment_record.index < datetime.today()]
+    def payment_to_date(self) -> float:
+        """returns the total amount paid including current month"""
+        df = self.record_to_date()
+        return df[PaymentSchema.actual_payment].sum()
+
+    def principle_reduction_to_date(self) -> float:
+        """principle reduction form initial mortgage to current month (after payment)"""
+        df = self.record_to_date()
         return (
             df[PaymentSchema.principle_at_start][0]
             - df[PaymentSchema.principle_at_end][-1]
         )
+
+    def payment_agreed(self) -> float:
+        """total paid, including overpayments, until end of final mortgage agreement"""
+        df = self.record_agreed()
+        return df[PaymentSchema.actual_payment].sum()
+
+    def principle_reduction_agreed(self) -> float:
+        """principle reduction form initial mortgage to end of final mortgage agreement"""
+        df = self.record_agreed()
+        return (
+            df[PaymentSchema.principle_at_start][0]
+            - df[PaymentSchema.principle_at_end][-1]
+        )
+
+    def cost_of_mortgage(self) -> float:
+        """total paid until principle is 0"""
+        return self.payment_record[PaymentSchema.actual_payment].sum()
+
+    def perc_mortgage_paid(self) -> float:
+        """perc of cost of mortgage already paid"""
+        return self.payment_to_date() / self.cost_of_mortgage()
