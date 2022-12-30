@@ -1,6 +1,11 @@
 PLOT_RANGE_DROPDOWN = "plot-range-dropdown"
 DATA_TYPE_DROPDOWN = "data-type-dropdown"
 
+TOTAL_PAYMENTS = "total-payments"
+TOTAL_INTEREST_PAYMENTS = "total-interest-payments"
+
+CURRENT_MONTH_PAYMENT = "current-month-payment"
+
 MORTGAGE_AGREEMENT_MODAL = "mortgage-agreement-modal"
 MORTGAGE_AGREEMENT_MODAL_OPEN = "mortgage-agreement-modal-open"
 MORTGAGE_AGREEMENT_MODAL_BODY = "mortgage-agreement-modal-body"

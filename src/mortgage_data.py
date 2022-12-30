@@ -8,7 +8,7 @@ import numpy_financial as npf
 from dateutil.relativedelta import relativedelta
 
 OVERPAYMENT_FILE = Path(
-    "source_data\\overpayment_record.xlsx"
+    r"C:\Users\ste-c\OneDrive\Documents\Mortgage\python_dashboard\source_data\overpayment_record.xlsx"
 )
 MORTGAGE_DATA = Path("source_data\\mortgages.json")
 
@@ -18,27 +18,29 @@ def months_difference(start_date: datetime, end_date: datetime) -> int:
         (end_date.year - start_date.year) * 12 + end_date.month - start_date.month
     ) + 1
 
+
 def duration_str(duration: relativedelta) -> str:
-    text = ''
+    text = ""
     if duration.years:
-        text = text + f'{duration.years} years'
+        text = text + f"{duration.years} years"
     if duration.years and duration.months:
-        text = text + ' and '
+        text = text + " and "
     if duration.months:
-        text = text + f'{duration.months} months'
-    text = text + ')'
+        text = text + f"{duration.months} months"
+    text = text + ")"
     return text
 
 
-class PaymentSchema():
+class PaymentSchema:
 
     principle_at_start = "Principle At Start"
     interest_owed = "Interest Owed"
     payment_owed = "Payment Owed"
     actual_payment = "Actual Payment"
     principle_at_end = "Principle At End"
-    mortgage_name = 'Mortgage Name'
+    mortgage_name = "Mortgage Name"
     overpayment = "Overpayment"
+
 
 def overpayment_series() -> pd.Series:
     df = pd.read_excel(OVERPAYMENT_FILE)
@@ -49,6 +51,7 @@ def overpayment_series() -> pd.Series:
     df = df.set_index("Month")
 
     return df[PaymentSchema.overpayment]
+
 
 @dataclass(order=True)
 class MortgageAgreement:
@@ -69,16 +72,27 @@ class MortgageAgreement:
         self.fixed_term_end = self.start_date + relativedelta(
             months=self.fixed_term - 1
         )
-    
+
     def display(self) -> str:
         text = f"Mortgage Name: {self.mortgage_name}"
         if self.principle_at_start:
             text = text + f"\nInitial Principle: €{self.principle_at_start:,.2f}"
         text = text + f"\nInterest Rate: {self.interest_rate * 100}%"
-        text = text + f"\nFixed from {self.start_date.strftime('%B %Y')} to {self.fixed_term_end.strftime('%B %Y')} ("
-        text = text + duration_str(relativedelta(self.fixed_term_end, self.start_date) + relativedelta(months=1))
-        text = text + f"\nTotal term from {self.start_date.strftime('%B %Y')} to {self.end_date.strftime('%B %Y')} ("
-        text = text + duration_str(relativedelta(self.end_date, self.start_date) + relativedelta(months=1))
+        text = (
+            text
+            + f"\nFixed from {self.start_date.strftime('%B %Y')} to {self.fixed_term_end.strftime('%B %Y')} ("
+        )
+        text = text + duration_str(
+            relativedelta(self.fixed_term_end, self.start_date)
+            + relativedelta(months=1)
+        )
+        text = (
+            text
+            + f"\nTotal term from {self.start_date.strftime('%B %Y')} to {self.end_date.strftime('%B %Y')} ("
+        )
+        text = text + duration_str(
+            relativedelta(self.end_date, self.start_date) + relativedelta(months=1)
+        )
         return text
 
 
@@ -94,7 +108,8 @@ def monthly_repayment(
 
 
 class MortgagePaymentRecord:
-    '''payment record for a specific mortgage.'''
+    """payment record for a specific mortgage."""
+
     def __init__(self, mortgage: MortgageAgreement) -> None:
         self.mortgage = mortgage
         self._payment_df = pd.DataFrame(
@@ -106,14 +121,18 @@ class MortgagePaymentRecord:
 
     @property
     def payment_df(self) -> pd.DataFrame:
-        '''dataframe containing all of the information about actual payments'''
+        """dataframe containing all of the information about actual payments"""
         if not self.mortgage.principle_at_start:
-            return self._payment_df # return empty dataframe if initial principle unknown
-        
+            return (
+                self._payment_df
+            )  # return empty dataframe if initial principle unknown
+
         # add overpayment data
         ser = overpayment_series()
         self._payment_df = self._payment_df.join(ser, how="left")
-        self._payment_df[PaymentSchema.overpayment] = self._payment_df[PaymentSchema.overpayment].fillna(0)
+        self._payment_df[PaymentSchema.overpayment] = self._payment_df[
+            PaymentSchema.overpayment
+        ].fillna(0)
 
         # calculate the payments
         self.add_actual_payment()
@@ -127,13 +146,15 @@ class MortgagePaymentRecord:
         if self.mortgage.principle_at_start:
             running_principle = self.mortgage.principle_at_start
             for idx in self._payment_df.index:
-                self._payment_df.at[idx, PaymentSchema.principle_at_start] = running_principle
+                self._payment_df.at[
+                    idx, PaymentSchema.principle_at_start
+                ] = running_principle
                 self._payment_df.at[idx, PaymentSchema.interest_owed] = (
                     running_principle * self.mortgage.interest_rate / 12
                 )
-                self._payment_df.at[idx,  PaymentSchema.payment_owed] = monthly_repayment(
-                    self.mortgage, running_principle, idx
-                )
+                self._payment_df.at[
+                    idx, PaymentSchema.payment_owed
+                ] = monthly_repayment(self.mortgage, running_principle, idx)
                 self._payment_df.at[idx, PaymentSchema.actual_payment] = (
                     self._payment_df.at[idx, PaymentSchema.payment_owed]
                     + self._payment_df.at[idx, PaymentSchema.overpayment]
@@ -143,35 +164,133 @@ class MortgagePaymentRecord:
                     + self._payment_df.at[idx, PaymentSchema.interest_owed]
                     - self._payment_df.at[idx, PaymentSchema.actual_payment]
                 )
-                self._payment_df.at[idx, PaymentSchema.principle_at_end] = running_principle
+                self._payment_df.at[
+                    idx, PaymentSchema.principle_at_end
+                ] = running_principle
 
 
 class TotalPaymentRecord:
-    '''class to gather all information about the payments. stores the list of existing mortgages,
-     as well as the payment record'''
+    """class to gather all information about the payments. stores the list of existing mortgages,
+    as well as the payment record"""
+
     def __init__(self) -> None:
         with open(MORTGAGE_DATA) as f:
             mortgage_data_list = json.load(f)
         self.mortgage_list = [MortgageAgreement(**i) for i in mortgage_data_list]
         self.mortgage_list.sort()
-        future_mortgage = MortgageAgreement(
-            start_year=(self.mortgage_list[-1].fixed_term_end + relativedelta(months=1)).year,
-            start_month=(self.mortgage_list[-1].fixed_term_end + relativedelta(months=1)).month,
-            mortgage_name='Future',
+        future_mortgage = self.calculate_future_mortgage()
+        self.mortgage_list.append(future_mortgage)
+        self.payment_record = self.calculate_payment_record()
+
+    def calculate_future_mortgage(self) -> MortgageAgreement:
+        """extends the last mortgage out to the remaining term to allow projections"""
+        return MortgageAgreement(
+            start_year=(
+                self.mortgage_list[-1].fixed_term_end + relativedelta(months=1)
+            ).year,
+            start_month=(
+                self.mortgage_list[-1].fixed_term_end + relativedelta(months=1)
+            ).month,
+            mortgage_name="Future",
             interest_rate=self.mortgage_list[-1].interest_rate,
             term=self.mortgage_list[-1].term - self.mortgage_list[-1].fixed_term,
             fixed_term=self.mortgage_list[-1].term - self.mortgage_list[-1].fixed_term,
         )
-        self.mortgage_list.append(future_mortgage)
-        self.payment_record = pd.DataFrame()
-    
-    def calculate_payments(self) -> pd.DataFrame:
-        '''calcuates the payments, storing the result in self.payment_record, as well as returning the result'''
+
+    def calculate_payment_record(self) -> pd.DataFrame:
         record_list: list[pd.DataFrame] = list()
         for i, mortgage in enumerate(self.mortgage_list):
             if not mortgage.principle_at_start and i != 0:
-                mortgage.principle_at_start = record_list[i-1].iloc[-1][PaymentSchema.principle_at_end]
+                mortgage.principle_at_start = record_list[i - 1].iloc[-1][
+                    PaymentSchema.principle_at_end
+                ]
             record_list.append(MortgagePaymentRecord(mortgage).payment_df)
-        self.payment_record = pd.concat(record_list)
-        return self.payment_record.round(2)
- 
+        return pd.concat(record_list)
+
+    def record_to_date(self) -> pd.DataFrame:
+        """record up to and including current month"""
+        return self.payment_record[self.payment_record.index < datetime.today()]
+
+    def record_agreed(self) -> pd.DataFrame:
+        """record only for months with a mortgage agreement in place"""
+        return self.payment_record[
+            self.payment_record[PaymentSchema.mortgage_name] != "Future"
+        ]
+
+    def record_this_month(self) -> pd.Series:
+        return self.payment_record.loc[
+            pd.Timestamp(datetime.today().replace(day=1).date())
+        ]
+
+    def payment_to_date(self) -> float:
+        """returns the total amount paid including current month"""
+        df = self.record_to_date()
+        return df[PaymentSchema.actual_payment].sum()
+
+    def principle_reduction_to_date(self) -> float:
+        """principle reduction form initial mortgage to current month (after payment)"""
+        df = self.record_to_date()
+        return (
+            df[PaymentSchema.principle_at_start][0]
+            - df[PaymentSchema.principle_at_end][-1]
+        )
+
+    def payment_agreed(self) -> float:
+        """total paid, including overpayments, until end of final mortgage agreement"""
+        df = self.record_agreed()
+        return df[PaymentSchema.actual_payment].sum()
+
+    def principle_reduction_agreed(self) -> float:
+        """principle reduction form initial mortgage to end of final mortgage agreement"""
+        df = self.record_agreed()
+        return (
+            df[PaymentSchema.principle_at_start][0]
+            - df[PaymentSchema.principle_at_end][-1]
+        )
+
+    def cost_of_mortgage(self) -> float:
+        """total paid until principle is 0"""
+        return self.payment_record[PaymentSchema.actual_payment].sum()
+
+    def perc_mortgage_paid(self) -> float:
+        """perc of cost of mortgage already paid"""
+        return self.payment_to_date() / self.cost_of_mortgage()
+
+    def interest_payment_to_date(self) -> float:
+        """returns the total amount paid including current month"""
+        df = self.record_to_date()
+        return df[PaymentSchema.interest_owed].sum()
+
+    def perc_interest_payment_to_date(self) -> float:
+        """calculate percentage of payment to date that has gone to interest"""
+        return self.interest_payment_to_date() / self.payment_to_date()
+
+    def interest_payment_agreed(self) -> float:
+        """total interest payment due up to end of latest mortgage agreement"""
+        df = self.record_agreed()
+        return df[PaymentSchema.interest_owed].sum()
+
+    def perc_interest_payment_agreed(self) -> float:
+        """percent of total payment that will go to interest at end of curernt mortgage agreement"""
+        return self.interest_payment_agreed() / self.payment_agreed()
+
+    def total_interest_payment(self) -> float:
+        """total interest to be paid to reduce principle to 0"""
+        return self.payment_record[PaymentSchema.interest_owed].sum()
+
+    def total_perc_interest_payment(self) -> float:
+        """percent of total payment that will go towards interest"""
+        return self.total_interest_payment() / self.cost_of_mortgage()
+
+    def payment_this_month(self) -> float:
+        """find the amount due this month"""
+        s = self.record_this_month()
+        return s[PaymentSchema.payment_owed]
+
+    def starting_principle_this_month(self) -> float:
+        s = self.record_this_month()
+        return s[PaymentSchema.principle_at_start]
+
+    def ending_principle_this_month(self) -> float:
+        s = self.record_this_month()
+        return s[PaymentSchema.principle_at_end]

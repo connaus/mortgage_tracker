@@ -6,7 +6,7 @@ from src.mortgage_data import TotalPaymentRecord, PaymentSchema
 from . import ids
 
 m = TotalPaymentRecord()
-mortgage = m.calculate_payments()
+mortgage = m.payment_record
 
 
 def render(app: Dash) -> html.Div:
