@@ -1,9 +1,17 @@
 from dash import Dash, html
 
-from . import range_dropdown, line_chart, data_dropdown
+from . import (
+    range_dropdown,
+    line_chart,
+    data_dropdown,
+    payment_totals,
+    interest_payment_totals,
+    current_month_payments,
+)
+from ..mortgage_data import TotalPaymentRecord
 
 
-def create_layout(app: Dash) -> html.Div:
+def create_layout(app: Dash, data: TotalPaymentRecord) -> html.Div:
     return html.Div(
         className="app-div",
         children=[
@@ -14,5 +22,13 @@ def create_layout(app: Dash) -> html.Div:
                 children=[range_dropdown.render(app), data_dropdown.render(app)],
             ),
             line_chart.render(app),
+            html.Div(
+                [
+                    current_month_payments.render(data),
+                    payment_totals.render(app, data),
+                    interest_payment_totals.render(app, data),
+                ],
+                style={"display": "flex", "flex-direction": "row"},
+            ),
         ],
     )
