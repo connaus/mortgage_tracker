@@ -5,7 +5,6 @@ from dash.dependencies import Output, Input, State
 from src.mortgage_data import TotalPaymentRecord, PaymentSchema
 from . import ids
 
-
 def render(app: Dash, data: TotalPaymentRecord) -> html.Div:
     @app.callback(
         Output(ids.LINE_CHART, "children"),

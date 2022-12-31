@@ -18,7 +18,6 @@ def months_difference(start_date: date, end_date: date) -> int:
         (end_date.year - start_date.year) * 12 + end_date.month - start_date.month
     ) + 1
 
-
 def duration_str(duration: relativedelta) -> str:
     text = ""
     if duration.years:
@@ -29,7 +28,6 @@ def duration_str(duration: relativedelta) -> str:
         text = text + f"{duration.months} months"
     text = text + ")"
     return text
-
 
 class PaymentSchema:
 
@@ -208,6 +206,7 @@ class TotalPaymentRecord:
 
     @property
     def payment_record(self) -> pd.DataFrame:
+
         record_list: list[pd.DataFrame] = list()
         for i, mortgage in enumerate(self.mortgage_list):
             if not mortgage.principle_at_start and i != 0:

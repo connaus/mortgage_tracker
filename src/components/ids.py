@@ -25,3 +25,8 @@ MORTGAGE_EDIT_MODAL_FIXED_TERM_MOTHS = "mortgage-edit-modal-fixed-term-months"
 MORTGAGE_EDIT_MODAL_PRINCIPLE = "mortgage-edit-modal-principle"
 
 LINE_CHART = "line-chart"
+
+TOTAL_PAYMENTS = "total-payments"
+TOTAL_INTEREST_PAYMENTS = "total-interest-payments"
+
+CURRENT_MONTH_PAYMENT = "current-month-payment"
