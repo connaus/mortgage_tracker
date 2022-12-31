@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, date
 import json
 from pathlib import Path
 from typing import Optional
@@ -13,11 +13,21 @@ OVERPAYMENT_FILE = Path(
 MORTGAGE_DATA = Path("source_data\\mortgages.json")
 
 
-def months_difference(start_date: datetime, end_date: datetime) -> int:
+def months_difference(start_date: date, end_date: date) -> int:
     return (
         (end_date.year - start_date.year) * 12 + end_date.month - start_date.month
     ) + 1
 
+def duration_str(duration: relativedelta) -> str:
+    text = ""
+    if duration.years:
+        text = text + f"{duration.years} years"
+    if duration.years and duration.months:
+        text = text + " and "
+    if duration.months:
+        text = text + f"{duration.months} months"
+    text = text + ")"
+    return text
 
 class PaymentSchema:
 
@@ -53,13 +63,44 @@ class MortgageAgreement:
     fixed_term: int  # in months
     principle_at_start: Optional[float] = None
 
-    def __post_init__(self) -> None:
-        """calculate the months repayments here"""
-        self.start_date = datetime(year=self.start_year, month=self.start_month, day=1)
-        self.end_date = self.start_date + relativedelta(months=self.term - 1)
-        self.fixed_term_end = self.start_date + relativedelta(
-            months=self.fixed_term - 1
+    @property
+    def start_date(self) -> date:
+        return date(year=self.start_year, month=self.start_month, day=1)
+
+    @start_date.setter
+    def start_date(self, x: date | datetime) -> None:
+        self.start_year = x.year
+        self.start_month = x.month
+
+    @property
+    def end_date(self) -> date:
+        return self.start_date + relativedelta(months=self.term - 1)
+
+    @property
+    def fixed_term_end(self) -> date:
+        return self.start_date + relativedelta(months=self.fixed_term - 1)
+
+    def display(self) -> str:
+        text = f"Mortgage Name: {self.mortgage_name}"
+        if self.principle_at_start:
+            text = text + f"\nInitial Principle: €{self.principle_at_start:,.2f}"
+        text = text + f"\nInterest Rate: {self.interest_rate * 100}%"
+        text = (
+            text
+            + f"\nFixed from {self.start_date.strftime('%B %Y')} to {self.fixed_term_end.strftime('%B %Y')} ("
         )
+        text = text + duration_str(
+            relativedelta(self.fixed_term_end, self.start_date)
+            + relativedelta(months=1)
+        )
+        text = (
+            text
+            + f"\nTotal term from {self.start_date.strftime('%B %Y')} to {self.end_date.strftime('%B %Y')} ("
+        )
+        text = text + duration_str(
+            relativedelta(self.end_date, self.start_date) + relativedelta(months=1)
+        )
+        return text
 
 
 def monthly_repayment(
@@ -146,7 +187,7 @@ class TotalPaymentRecord:
         self.mortgage_list.sort()
         future_mortgage = self.calculate_future_mortgage()
         self.mortgage_list.append(future_mortgage)
-        self.payment_record = self.calculate_payment_record()
+        self._payment_record = self.payment_record
 
     def calculate_future_mortgage(self) -> MortgageAgreement:
         """extends the last mortgage out to the remaining term to allow projections"""
@@ -163,7 +204,9 @@ class TotalPaymentRecord:
             fixed_term=self.mortgage_list[-1].term - self.mortgage_list[-1].fixed_term,
         )
 
-    def calculate_payment_record(self) -> pd.DataFrame:
+    @property
+    def payment_record(self) -> pd.DataFrame:
+
         record_list: list[pd.DataFrame] = list()
         for i, mortgage in enumerate(self.mortgage_list):
             if not mortgage.principle_at_start and i != 0:
@@ -171,20 +214,21 @@ class TotalPaymentRecord:
                     PaymentSchema.principle_at_end
                 ]
             record_list.append(MortgagePaymentRecord(mortgage).payment_df)
-        return pd.concat(record_list)
+        self._payment_record = pd.concat(record_list)
+        return self._payment_record
 
     def record_to_date(self) -> pd.DataFrame:
         """record up to and including current month"""
-        return self.payment_record[self.payment_record.index < datetime.today()]
+        return self._payment_record[self._payment_record.index < datetime.today()]
 
     def record_agreed(self) -> pd.DataFrame:
         """record only for months with a mortgage agreement in place"""
-        return self.payment_record[
-            self.payment_record[PaymentSchema.mortgage_name] != "Future"
+        return self._payment_record[
+            self._payment_record[PaymentSchema.mortgage_name] != "Future"
         ]
 
     def record_this_month(self) -> pd.Series:
-        return self.payment_record.loc[
+        return self._payment_record.loc[
             pd.Timestamp(datetime.today().replace(day=1).date())
         ]
 
@@ -216,7 +260,7 @@ class TotalPaymentRecord:
 
     def cost_of_mortgage(self) -> float:
         """total paid until principle is 0"""
-        return self.payment_record[PaymentSchema.actual_payment].sum()
+        return self._payment_record[PaymentSchema.actual_payment].sum()
 
     def perc_mortgage_paid(self) -> float:
         """perc of cost of mortgage already paid"""
@@ -242,7 +286,7 @@ class TotalPaymentRecord:
 
     def total_interest_payment(self) -> float:
         """total interest to be paid to reduce principle to 0"""
-        return self.payment_record[PaymentSchema.interest_owed].sum()
+        return self._payment_record[PaymentSchema.interest_owed].sum()
 
     def total_perc_interest_payment(self) -> float:
         """percent of total payment that will go towards interest"""

@@ -4,6 +4,8 @@ from . import (
     range_dropdown,
     line_chart,
     data_dropdown,
+    edit_mortgage_modal,
+    view_mortgage_modal,
     payment_totals,
     interest_payment_totals,
     current_month_payments,
@@ -19,9 +21,14 @@ def create_layout(app: Dash, data: TotalPaymentRecord) -> html.Div:
             html.Hr(),
             html.Div(
                 className="dropdown-container",
-                children=[range_dropdown.render(app), data_dropdown.render(app)],
+                children=[
+                    range_dropdown.render(app),
+                    data_dropdown.render(app),
+                    view_mortgage_modal.render(app, data.mortgage_list),
+                    edit_mortgage_modal.render(app, data),
+                ],
             ),
-            line_chart.render(app),
+            line_chart.render(app, data),
             html.Div(
                 [
                     current_month_payments.render(data),
