@@ -43,6 +43,7 @@ def render(app: Dash, data: TotalPaymentRecord) -> html.Div:
     def fill_placeholders(
         n1, prev, next
     ) -> tuple[str, str, date, str, int, int, int, int, str | None]:
+        """gets the data from the currently displayed mortgage to fill all placeholders"""
         mortgage = data.mortgage_list[next - prev]
         name = mortgage.mortgage_name
         rate = f"{mortgage.interest_rate * 100}%"
@@ -114,6 +115,7 @@ def render(app: Dash, data: TotalPaymentRecord) -> html.Div:
                                             id=ids.MORTGAGE_EDIT_MODAL_FIXED_TERM_YEARS,
                                             type="number",
                                             min=0,
+                                            debounce=True,
                                             style={"flex": 1},
                                         ),
                                         dbc.Input(
@@ -121,6 +123,7 @@ def render(app: Dash, data: TotalPaymentRecord) -> html.Div:
                                             type="number",
                                             min=0,
                                             max=12,
+                                            debounce=True,
                                             style={"flex": 1},
                                         ),
                                     ],
@@ -150,6 +153,7 @@ def render(app: Dash, data: TotalPaymentRecord) -> html.Div:
                                             id=ids.MORTGAGE_EDIT_MODAL_TERM_YEARS,
                                             type="number",
                                             min=0,
+                                            debounce=True,
                                             style={"flex": 1},
                                         ),
                                         dbc.Input(
@@ -157,6 +161,7 @@ def render(app: Dash, data: TotalPaymentRecord) -> html.Div:
                                             type="number",
                                             min=0,
                                             max=12,
+                                            debounce=True,
                                             style={"flex": 1},
                                         ),
                                     ],
@@ -168,6 +173,7 @@ def render(app: Dash, data: TotalPaymentRecord) -> html.Div:
                         dbc.Input(
                             id=ids.MORTGAGE_EDIT_MODAL_PRINCIPLE,
                             type="number",
+                            debounce=True,
                         ),
                     ]
                 ),

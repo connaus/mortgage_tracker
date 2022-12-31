@@ -25,6 +25,6 @@ def create_layout(app: Dash, data: TotalPaymentRecord) -> html.Div:
                     edit_mortgage_modal.render(app, data),
                 ],
             ),
-            line_chart.render(app),
+            line_chart.render(app, data),
         ],
     )
