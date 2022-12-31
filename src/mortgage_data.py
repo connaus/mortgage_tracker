@@ -189,7 +189,7 @@ class TotalPaymentRecord:
         self.mortgage_list.sort()
         future_mortgage = self.calculate_future_mortgage()
         self.mortgage_list.append(future_mortgage)
-        self.payment_record = self.calculate_payment_record()
+        self._payment_record = self.payment_record
 
     def calculate_future_mortgage(self) -> MortgageAgreement:
         """extends the last mortgage out to the remaining term to allow projections"""
@@ -206,7 +206,8 @@ class TotalPaymentRecord:
             fixed_term=self.mortgage_list[-1].term - self.mortgage_list[-1].fixed_term,
         )
 
-    def calculate_payment_record(self) -> pd.DataFrame:
+    @property
+    def payment_record(self) -> pd.DataFrame:
         record_list: list[pd.DataFrame] = list()
         for i, mortgage in enumerate(self.mortgage_list):
             if not mortgage.principle_at_start and i != 0:
@@ -214,21 +215,21 @@ class TotalPaymentRecord:
                     PaymentSchema.principle_at_end
                 ]
             record_list.append(MortgagePaymentRecord(mortgage).payment_df)
-        self.payment_record = pd.concat(record_list)
-        return self.payment_record
+        self._payment_record = pd.concat(record_list)
+        return self._payment_record
 
     def record_to_date(self) -> pd.DataFrame:
         """record up to and including current month"""
-        return self.payment_record[self.payment_record.index < datetime.today()]
+        return self._payment_record[self._payment_record.index < datetime.today()]
 
     def record_agreed(self) -> pd.DataFrame:
         """record only for months with a mortgage agreement in place"""
-        return self.payment_record[
-            self.payment_record[PaymentSchema.mortgage_name] != "Future"
+        return self._payment_record[
+            self._payment_record[PaymentSchema.mortgage_name] != "Future"
         ]
 
     def record_this_month(self) -> pd.Series:
-        return self.payment_record.loc[
+        return self._payment_record.loc[
             pd.Timestamp(datetime.today().replace(day=1).date())
         ]
 
@@ -260,7 +261,7 @@ class TotalPaymentRecord:
 
     def cost_of_mortgage(self) -> float:
         """total paid until principle is 0"""
-        return self.payment_record[PaymentSchema.actual_payment].sum()
+        return self._payment_record[PaymentSchema.actual_payment].sum()
 
     def perc_mortgage_paid(self) -> float:
         """perc of cost of mortgage already paid"""
@@ -286,7 +287,7 @@ class TotalPaymentRecord:
 
     def total_interest_payment(self) -> float:
         """total interest to be paid to reduce principle to 0"""
-        return self.payment_record[PaymentSchema.interest_owed].sum()
+        return self._payment_record[PaymentSchema.interest_owed].sum()
 
     def total_perc_interest_payment(self) -> float:
         """percent of total payment that will go towards interest"""

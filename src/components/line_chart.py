@@ -57,8 +57,6 @@ def render(app: Dash, data: TotalPaymentRecord) -> html.Div:
             if principle:
                 mortgage.principle_at_start = principle
 
-            data.calculate_payment_record()
-
         record = data.payment_record
         if range == "Only Past":
             plot_data = record[record.index <= datetime.today()]
