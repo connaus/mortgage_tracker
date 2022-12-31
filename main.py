@@ -11,7 +11,7 @@ def main():
     app = Dash(external_stylesheets=[BOOTSTRAP])
     app.title = "Mortgage Tracker"
     app.layout = create_layout(app, m)
-    app.run(debug=False)
+    app.run(debug=True)
 
 
 if __name__ == "__main__":

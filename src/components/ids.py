@@ -22,5 +22,6 @@ MORTGAGE_EDIT_MODAL_TERM_YEARS = "mortgage-edit-modal-term-years"
 MORTGAGE_EDIT_MODAL_TERM_MOTHS = "mortgage-edit-modal-term-months"
 MORTGAGE_EDIT_MODAL_FIXED_TERM_YEARS = "mortgage-edit-modal-fixed-term-years"
 MORTGAGE_EDIT_MODAL_FIXED_TERM_MOTHS = "mortgage-edit-modal-fixed-term-months"
+MORTGAGE_EDIT_MODAL_PRINCIPLE = "mortgage-edit-modal-principle"
 
 LINE_CHART = "line-chart"
