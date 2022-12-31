@@ -102,5 +102,5 @@ def render(app: Dash, mortgage_list: list[MortgageAgreement]) -> html.Div:
                 ),
             ],
         ),
-        style={"width": "25%", "display": "inline-block"},
+        style={"width": "25%", "display": "inline-block", "verticalAlign": "bottom"},
     )

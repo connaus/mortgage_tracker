@@ -68,6 +68,7 @@ def render(app: Dash, data: TotalPaymentRecord) -> html.Div:
         fig = px.line(
             x=plot_data.index,
             y=plot_data[type],
+            labels={"x": "Date", "y": type},
             markers=True,
             title=type,
             color=plot_data[PaymentSchema.mortgage_name],
