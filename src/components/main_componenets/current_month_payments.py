@@ -1,22 +1,10 @@
-from typing import Protocol
 from dash import html
 from .. import ids
+from processor.model_view_link import Updater
 
 
-class PaymentRecord(Protocol):
-    def payment_this_month(self) -> float:
-        ...
-
-    def starting_principle_this_month(self) -> float:
-        ...
-
-    def ending_principle_this_month(self) -> float:
-        ...
-
-
-def render(data: PaymentRecord) -> html.Div:
-    header = f"Payments Owed This Month: €{data.payment_this_month():,.2f}"
-    subhead = f"This will reduce the principle from €{data.starting_principle_this_month():,.2f} to €{data.ending_principle_this_month():,.2f}"
+def render(data: Updater) -> html.Div:
+    header, subhead = data.current_month_payment_text()
     return html.Div(
         [html.H4(header), html.H6(subhead)],
         id=ids.CURRENT_MONTH_PAYMENT,

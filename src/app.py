@@ -9,10 +9,10 @@ def main():
 
     data = TotalPaymentRecord()
     app = Dash(external_stylesheets=[BOOTSTRAP])
-    p = Updater(app, data)
-    p.run()
+    updater = Updater(app, data)
+    updater.run()
     app.title = "Mortgage Tracker"
-    app.layout = create_layout(app, data)
+    app.layout = create_layout(updater)
     app.run(debug=True)
 
 
