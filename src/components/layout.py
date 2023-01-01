@@ -1,4 +1,4 @@
-from dash import Dash, html
+from dash import html
 
 from components.main_componenets import (
     range_dropdown,
@@ -26,8 +26,8 @@ def create_layout(updater: Updater) -> html.Div:
             html.Div(
                 className="dropdown-container",
                 children=[
-                    range_dropdown.render(updater.app),
-                    data_dropdown.render(updater.app),
+                    range_dropdown.render(),
+                    data_dropdown.render(),
                     view_mortgage_modal.render(updater.app),
                     edit_mortgage_modal.render(updater.app),
                 ],

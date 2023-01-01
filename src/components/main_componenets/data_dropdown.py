@@ -1,9 +1,9 @@
-from dash import Dash, html, dcc
+from dash import html, dcc
 from .. import ids
 from data.mortgage_data import PaymentSchema
 
 
-def render(app: Dash) -> html.Div:
+def render() -> html.Div:
     data_types = [
         PaymentSchema.principle_at_start,
         PaymentSchema.interest_owed,
