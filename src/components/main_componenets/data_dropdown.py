@@ -1,6 +1,6 @@
 from dash import Dash, html, dcc
-from . import ids
-from ..mortgage_data import PaymentSchema
+from .. import ids
+from data.mortgage_data import PaymentSchema
 
 
 def render(app: Dash) -> html.Div:

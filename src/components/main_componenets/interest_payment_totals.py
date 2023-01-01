@@ -1,5 +1,5 @@
 from dash import Dash, html, Output, Input
-from . import ids
+from .. import ids
 from typing import Protocol
 
 

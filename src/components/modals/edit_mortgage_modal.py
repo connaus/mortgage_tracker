@@ -1,8 +1,8 @@
 from math import floor
 from dash import Dash, html, dcc, Output, Input, State
 import dash_bootstrap_components as dbc
-from . import ids
-from ..mortgage_data import TotalPaymentRecord
+from .. import ids
+from data.mortgage_data import TotalPaymentRecord
 from datetime import date
 
 

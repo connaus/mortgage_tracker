@@ -1,16 +1,20 @@
 from dash import Dash, html
 
-from . import (
+from components.main_componenets import (
     range_dropdown,
     line_chart,
     data_dropdown,
-    edit_mortgage_modal,
-    view_mortgage_modal,
     payment_totals,
     interest_payment_totals,
     current_month_payments,
 )
-from ..mortgage_data import TotalPaymentRecord
+
+from components.modals import (
+    edit_mortgage_modal,
+    view_mortgage_modal,
+)
+
+from data.mortgage_data import TotalPaymentRecord
 
 
 def create_layout(app: Dash, data: TotalPaymentRecord) -> html.Div:

@@ -1,7 +1,6 @@
-from src.components.layout import create_layout
-from src.mortgage_data import TotalPaymentRecord, PaymentSchema
-import plotly.express as px
-from dash import Dash, html
+from components.layout import create_layout
+from data.mortgage_data import TotalPaymentRecord
+from dash import Dash
 from dash_bootstrap_components.themes import BOOTSTRAP
 
 

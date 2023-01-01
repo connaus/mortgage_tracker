@@ -1,6 +1,6 @@
 from typing import Protocol
 from dash import html
-from . import ids
+from .. import ids
 
 
 class PaymentRecord(Protocol):

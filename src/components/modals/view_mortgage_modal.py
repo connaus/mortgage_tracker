@@ -1,8 +1,8 @@
 from dash import Dash, html, Output, Input, State, dcc
 from datetime import datetime, date
 import dash_bootstrap_components as dbc
-from . import ids
-from ..mortgage_data import MortgageAgreement
+from .. import ids
+from data.mortgage_data import MortgageAgreement
 
 
 def render(app: Dash, mortgage_list: list[MortgageAgreement]) -> html.Div:
