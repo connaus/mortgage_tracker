@@ -1,4 +1,4 @@
-/source_data
+src/source_data
 /test.py
 *.pyc
 .vscode/launch.json
