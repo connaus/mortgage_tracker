@@ -154,9 +154,7 @@ class Updater:
             ],
         )
         def toggle_next(next: int, prev: int) -> bool:
-            if (
-                next - prev >= len(self.data.mortgage_list) - 2
-            ):  # -2 as we want to exclude "Future" agreement
+            if next - prev >= len(self.data.mortgage_list) - 1:
                 return True
             return False
 

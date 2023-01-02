@@ -18,6 +18,7 @@ def months_difference(start_date: date, end_date: date) -> int:
         (end_date.year - start_date.year) * 12 + end_date.month - start_date.month
     ) + 1
 
+
 def duration_str(duration: relativedelta) -> str:
     text = ""
     if duration.years:
@@ -28,6 +29,7 @@ def duration_str(duration: relativedelta) -> str:
         text = text + f"{duration.months} months"
     text = text + ")"
     return text
+
 
 class PaymentSchema:
 
@@ -185,8 +187,6 @@ class TotalPaymentRecord:
             mortgage_data_list = json.load(f)
         self.mortgage_list = [MortgageAgreement(**i) for i in mortgage_data_list]
         self.mortgage_list.sort()
-        future_mortgage = self.calculate_future_mortgage()
-        self.mortgage_list.append(future_mortgage)
         self._payment_record = self.payment_record
 
     def calculate_future_mortgage(self) -> MortgageAgreement:
@@ -204,11 +204,20 @@ class TotalPaymentRecord:
             fixed_term=self.mortgage_list[-1].term - self.mortgage_list[-1].fixed_term,
         )
 
+    def add_mortgage(self, mortgage: MortgageAgreement) -> None:
+
+        self.mortgage_list.append(mortgage)
+        self.mortgage_list.sort()
+
     @property
     def payment_record(self) -> pd.DataFrame:
-
+        """calculates the total payment history, as well as projected future payments
+        first sorts the mortgage list, adds a projection, then calculates everything."""
         record_list: list[pd.DataFrame] = list()
-        for i, mortgage in enumerate(self.mortgage_list):
+        self.mortgage_list.sort()
+        mortgages = self.mortgage_list.copy()
+        mortgages.append(self.calculate_future_mortgage())
+        for i, mortgage in enumerate(mortgages):
             if not mortgage.principle_at_start and i != 0:
                 mortgage.principle_at_start = record_list[i - 1].iloc[-1][
                     PaymentSchema.principle_at_end
