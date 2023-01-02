@@ -6,17 +6,34 @@ from typing import Optional
 import pandas as pd
 import numpy_financial as npf
 from dateutil.relativedelta import relativedelta
+from settings.settings import Settings
 
-OVERPAYMENT_FILE = Path(
-    r"C:\Users\ste-c\OneDrive\Documents\Mortgage\python_dashboard\source_data\overpayment_record.xlsx"
-)
-MORTGAGE_DATA = Path("source_data\\mortgages.json")
+
+class DataLoader:
+    def __init__(self, settings: Settings) -> None:
+        self.mortgage_json = Path(settings.mortgage_json)
+        self.overpayment_file = Path(settings.overpayment_file)
+
+    def load_mortgage_data(self) -> dict:
+        with open(self.mortgage_json) as f:
+            return json.load(f)
+
+    def load_overpayment_series(self) -> pd.Series:
+        df = pd.read_excel(self.overpayment_file)
+
+        df["Month"] = df["Month"].apply(lambda x: x.to_pydatetime())
+        df["Month"] = df["Month"].apply(lambda x: x.replace(day=1))
+
+        df = df.set_index("Month")
+
+        return df[PaymentSchema.overpayment]
 
 
 def months_difference(start_date: date, end_date: date) -> int:
     return (
         (end_date.year - start_date.year) * 12 + end_date.month - start_date.month
     ) + 1
+
 
 def duration_str(duration: relativedelta) -> str:
     text = ""
@@ -29,6 +46,7 @@ def duration_str(duration: relativedelta) -> str:
     text = text + ")"
     return text
 
+
 class PaymentSchema:
 
     principle_at_start = "Principle At Start"
@@ -38,17 +56,6 @@ class PaymentSchema:
     principle_at_end = "Principle At End"
     mortgage_name = "Mortgage Name"
     overpayment = "Overpayment"
-
-
-def overpayment_series() -> pd.Series:
-    df = pd.read_excel(OVERPAYMENT_FILE)
-
-    df["Month"] = df["Month"].apply(lambda x: x.to_pydatetime())
-    df["Month"] = df["Month"].apply(lambda x: x.replace(day=1))
-
-    df = df.set_index("Month")
-
-    return df[PaymentSchema.overpayment]
 
 
 @dataclass(order=True)
@@ -117,7 +124,7 @@ def monthly_repayment(
 class MortgagePaymentRecord:
     """payment record for a specific mortgage."""
 
-    def __init__(self, mortgage: MortgageAgreement) -> None:
+    def __init__(self, mortgage: MortgageAgreement, overpayments: pd.Series) -> None:
         self.mortgage = mortgage
         self._payment_df = pd.DataFrame(
             index=[
@@ -125,6 +132,7 @@ class MortgagePaymentRecord:
                 for i in range(mortgage.fixed_term)
             ],
         )
+        self.overpayments = overpayments
 
     @property
     def payment_df(self) -> pd.DataFrame:
@@ -135,7 +143,7 @@ class MortgagePaymentRecord:
             )  # return empty dataframe if initial principle unknown
 
         # add overpayment data
-        ser = overpayment_series()
+        ser = self.overpayments
         self._payment_df = self._payment_df.join(ser, how="left")
         self._payment_df[PaymentSchema.overpayment] = self._payment_df[
             PaymentSchema.overpayment
@@ -180,13 +188,12 @@ class TotalPaymentRecord:
     """class to gather all information about the payments. stores the list of existing mortgages,
     as well as the payment record"""
 
-    def __init__(self) -> None:
-        with open(MORTGAGE_DATA) as f:
-            mortgage_data_list = json.load(f)
+    def __init__(self, settings: Settings) -> None:
+        data_loader = DataLoader(settings)
+        mortgage_data_list = data_loader.load_mortgage_data()
         self.mortgage_list = [MortgageAgreement(**i) for i in mortgage_data_list]
         self.mortgage_list.sort()
-        future_mortgage = self.calculate_future_mortgage()
-        self.mortgage_list.append(future_mortgage)
+        self.overpayment_series = data_loader.load_overpayment_series()
         self._payment_record = self.payment_record
 
     def calculate_future_mortgage(self) -> MortgageAgreement:
@@ -204,16 +211,32 @@ class TotalPaymentRecord:
             fixed_term=self.mortgage_list[-1].term - self.mortgage_list[-1].fixed_term,
         )
 
+    def add_mortgage(self, mortgage: MortgageAgreement) -> None:
+
+        self.mortgage_list.append(mortgage)
+        self.mortgage_list.sort()
+
+    def add_overpayment(self, date: datetime, amount: float) -> None:
+
+        date = pd.to_datetime(date)
+        self.overpayment_series[date] = amount
+
     @property
     def payment_record(self) -> pd.DataFrame:
-
+        """calculates the total payment history, as well as projected future payments
+        first sorts the mortgage list, adds a projection, then calculates everything."""
         record_list: list[pd.DataFrame] = list()
-        for i, mortgage in enumerate(self.mortgage_list):
+        self.mortgage_list.sort()
+        mortgages = self.mortgage_list.copy()
+        mortgages.append(self.calculate_future_mortgage())
+        for i, mortgage in enumerate(mortgages):
             if not mortgage.principle_at_start and i != 0:
                 mortgage.principle_at_start = record_list[i - 1].iloc[-1][
                     PaymentSchema.principle_at_end
                 ]
-            record_list.append(MortgagePaymentRecord(mortgage).payment_df)
+            record_list.append(
+                MortgagePaymentRecord(mortgage, self.overpayment_series).payment_df
+            )
         self._payment_record = pd.concat(record_list)
         return self._payment_record
 

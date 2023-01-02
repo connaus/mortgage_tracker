@@ -1,8 +1,8 @@
-from dash import Dash, html, dcc
-from . import ids
+from dash import html, dcc
+from .. import ids
 
 
-def render(app: Dash) -> html.Div:
+def render() -> html.Div:
     plot_range = ["Only Past", "Mortgage Agreements", "Future Projection"]
     return html.Div(
         children=[

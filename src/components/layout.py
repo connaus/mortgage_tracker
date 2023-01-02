@@ -1,39 +1,43 @@
-from dash import Dash, html
+from dash import html
 
-from . import (
+from components.main_componenets import (
     range_dropdown,
     line_chart,
     data_dropdown,
-    edit_mortgage_modal,
-    view_mortgage_modal,
     payment_totals,
     interest_payment_totals,
     current_month_payments,
 )
-from ..mortgage_data import TotalPaymentRecord
+
+from components.modals import (
+    edit_mortgage_modal,
+    view_mortgage_modal,
+)
+
+from processor.model_view_link import Updater
 
 
-def create_layout(app: Dash, data: TotalPaymentRecord) -> html.Div:
+def create_layout(updater: Updater) -> html.Div:
     return html.Div(
         className="app-div",
         children=[
-            html.H1(app.title),
+            html.H1(updater.app.title),
             html.Hr(),
             html.Div(
                 className="dropdown-container",
                 children=[
-                    range_dropdown.render(app),
-                    data_dropdown.render(app),
-                    view_mortgage_modal.render(app, data.mortgage_list),
-                    edit_mortgage_modal.render(app, data),
+                    range_dropdown.render(),
+                    data_dropdown.render(),
+                    view_mortgage_modal.render(updater.app),
+                    edit_mortgage_modal.render(updater.app),
                 ],
             ),
-            line_chart.render(app, data),
+            line_chart.render(updater.app),
             html.Div(
                 [
-                    current_month_payments.render(data),
-                    payment_totals.render(app, data),
-                    interest_payment_totals.render(app, data),
+                    current_month_payments.render(updater),
+                    payment_totals.render(),
+                    interest_payment_totals.render(),
                 ],
                 style={"display": "flex", "flex-direction": "row"},
             ),

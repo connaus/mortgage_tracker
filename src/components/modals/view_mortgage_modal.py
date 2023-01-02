@@ -1,11 +1,9 @@
-from dash import Dash, html, Output, Input, State, dcc
-from datetime import datetime, date
+from dash import Dash, html, Output, Input, State
 import dash_bootstrap_components as dbc
-from . import ids
-from ..mortgage_data import MortgageAgreement
+from .. import ids
 
 
-def render(app: Dash, mortgage_list: list[MortgageAgreement]) -> html.Div:
+def render(app: Dash) -> html.Div:
     @app.callback(
         Output(ids.MORTGAGE_AGREEMENT_MODAL, "is_open"),
         Input(ids.MORTGAGE_AGREEMENT_MODAL_OPEN, "n_clicks"),
@@ -15,32 +13,6 @@ def render(app: Dash, mortgage_list: list[MortgageAgreement]) -> html.Div:
         if n1:
             return not is_open
         return is_open
-
-    @app.callback(
-        Output(ids.MORTGAGE_AGREEMENT_MODAL_BODY, "children"),
-        [
-            Input(ids.MORTGAGE_AGREEMENT_MODAL_NEXT, "n_clicks"),
-            Input(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),
-        ],
-    )
-    def update_modal_text(next: int, prev: int) -> list[html.Div]:
-        return [
-            html.Div(line) for line in mortgage_list[next - prev].display().split("\n")
-        ]
-
-    @app.callback(
-        Output(ids.MORTGAGE_AGREEMENT_MODAL_NEXT, "disabled"),
-        [
-            Input(ids.MORTGAGE_AGREEMENT_MODAL_NEXT, "n_clicks"),
-            Input(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),
-        ],
-    )
-    def toggle_next(next: int, prev: int) -> bool:
-        if (
-            next - prev >= len(mortgage_list) - 2
-        ):  # -2 as we want to exclude "Future" agreement
-            return True
-        return False
 
     @app.callback(
         Output(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "disabled"),
@@ -66,10 +38,7 @@ def render(app: Dash, mortgage_list: list[MortgageAgreement]) -> html.Div:
                     [
                         dbc.ModalHeader(dbc.ModalTitle("Mortgage Details")),
                         dbc.ModalBody(
-                            [
-                                html.Div(line)
-                                for line in mortgage_list[0].display().split("\n")
-                            ],
+                            [html.Div()],
                             id=ids.MORTGAGE_AGREEMENT_MODAL_BODY,
                         ),
                         dbc.ModalFooter(
