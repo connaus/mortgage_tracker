@@ -12,6 +12,7 @@ MORTGAGE_AGREEMENT_MODAL_BODY = "mortgage-agreement-modal-body"
 MORTGAGE_AGREEMENT_MODAL_PREVIOUS = "mortgage-agreement-modal-previous"
 MORTGAGE_AGREEMENT_MODAL_NEXT = "mortgage-agreement-modal-next"
 MORTGAGE_AGREEMENT_MODAL_EDIT = "mortgage-agreement-modal-edit"
+MORTGAGE_AGREEMENT_MODAL_DELETE = "mortgage-agreement-modal-delete"
 
 MORTGAGE_EDIT_MODAL = "mortgage-edit-modal"
 MORTGAGE_EDIT_MODAL_CLOSE = "mortgage-edit-modal-close"

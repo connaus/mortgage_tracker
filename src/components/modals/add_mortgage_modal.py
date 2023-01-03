@@ -24,11 +24,6 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
     return html.Div(
         children=html.Div(
             [
-                dbc.Button(
-                    "Add New Mortgage",
-                    id=ids.MORTGAGE_ADD_MODAL_OPEN,
-                    n_clicks=0,
-                ),
                 dbc.Modal(
                     [
                         dbc.ModalHeader(dbc.ModalTitle("Add Mortgage")),

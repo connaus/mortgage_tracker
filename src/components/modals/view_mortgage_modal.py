@@ -31,7 +31,7 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
         children=html.Div(
             [
                 dbc.Button(
-                    "Open Mortgage Details",
+                    "View/Edit Mortgages",
                     id=ids.MORTGAGE_AGREEMENT_MODAL_OPEN,
                     n_clicks=0,
                 ),
@@ -47,24 +47,37 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
                                 dbc.Button(
                                     "Previous",
                                     id=ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS,
-                                    class_name="ms-auto",
                                     n_clicks=0,
                                     disabled=True,
+                                    style={"flex": 1},
+                                ),
+                                dbc.Button(
+                                    "New",
+                                    id=ids.MORTGAGE_ADD_MODAL_OPEN,
+                                    n_clicks=0,
+                                    style={"flex": 1},
                                 ),
                                 dbc.Button(
                                     "Edit",
                                     id=ids.MORTGAGE_AGREEMENT_MODAL_EDIT,
-                                    class_name="ms-auto",
                                     n_clicks=0,
+                                    style={"flex": 1},
+                                ),
+                                dbc.Button(
+                                    "Delete",
+                                    id=ids.MORTGAGE_AGREEMENT_MODAL_DELETE,
+                                    n_clicks=0,
+                                    style={"flex": 1},
                                 ),
                                 dbc.Button(
                                     "Next",
                                     id=ids.MORTGAGE_AGREEMENT_MODAL_NEXT,
-                                    class_name="ms-auto",
                                     n_clicks=0,
                                     disabled=False,
+                                    style={"flex": 1},
                                 ),
-                            ]
+                            ],
+                            style={"display": "flex"},
                         ),
                     ],
                     id=ids.MORTGAGE_AGREEMENT_MODAL,
