@@ -1,10 +1,11 @@
 from dash import Dash, html, Output, Input, State
 import dash_bootstrap_components as dbc
 from .. import ids
+from processor.model_view_link import Updater
 
 
-def render(app: Dash) -> html.Div:
-    @app.callback(
+def render(updater: Updater, style: dict = {}) -> html.Div:
+    @updater.app.callback(
         Output(ids.MORTGAGE_AGREEMENT_MODAL, "is_open"),
         Input(ids.MORTGAGE_AGREEMENT_MODAL_OPEN, "n_clicks"),
         [State(ids.MORTGAGE_AGREEMENT_MODAL, "is_open")],
@@ -14,7 +15,7 @@ def render(app: Dash) -> html.Div:
             return not is_open
         return is_open
 
-    @app.callback(
+    @updater.app.callback(
         Output(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "disabled"),
         [
             Input(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),

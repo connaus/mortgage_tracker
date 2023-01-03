@@ -24,6 +24,18 @@ MORTGAGE_EDIT_MODAL_FIXED_TERM_YEARS = "mortgage-edit-modal-fixed-term-years"
 MORTGAGE_EDIT_MODAL_FIXED_TERM_MOTHS = "mortgage-edit-modal-fixed-term-months"
 MORTGAGE_EDIT_MODAL_PRINCIPLE = "mortgage-edit-modal-principle"
 
+MORTGAGE_ADD_MODAL = "mortgage-add-modal"
+MORTGAGE_ADD_MODAL_OPEN = "mortgage-add-modal-open"
+MORTGAGE_ADD_MODAL_CLOSE = "mortgage-add-modal-close"
+MORTGAGE_ADD_MODAL_NAME = "mortgage-add-modal-name"
+MORTGAGE_ADD_MODAL_RATE = "mortgage-add-modal-rate"
+MORTGAGE_ADD_MODAL_START = "mortgage-add-modal-start"
+MORTGAGE_ADD_MODAL_TERM_YEARS = "mortgage-add-modal-term-years"
+MORTGAGE_ADD_MODAL_TERM_MOTHS = "mortgage-add-modal-term-months"
+MORTGAGE_ADD_MODAL_FIXED_TERM_YEARS = "mortgage-add-modal-fixed-term-years"
+MORTGAGE_ADD_MODAL_FIXED_TERM_MOTHS = "mortgage-add-modal-fixed-term-months"
+MORTGAGE_ADD_MODAL_PRINCIPLE = "mortgage-add-modal-principle"
+
 LINE_CHART = "line-chart"
 
 TOTAL_PAYMENTS = "total-payments"

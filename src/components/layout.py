@@ -12,6 +12,7 @@ from components.main_componenets import (
 from components.modals import (
     edit_mortgage_modal,
     view_mortgage_modal,
+    add_mortgage_modal,
 )
 
 from processor.model_view_link import Updater
@@ -28,7 +29,22 @@ def create_layout(updater: Updater) -> html.Div:
                 children=[
                     range_dropdown.render(),
                     data_dropdown.render(),
-                    view_mortgage_modal.render(updater.app),
+                    view_mortgage_modal.render(
+                        updater,
+                        style={
+                            "width": "25%",
+                            "display": "inline-block",
+                            "verticalAlign": "bottom",
+                        },
+                    ),
+                    add_mortgage_modal.render(
+                        updater,
+                        style={
+                            "width": "25%",
+                            "display": "inline-block",
+                            "verticalAlign": "bottom",
+                        },
+                    ),
                     edit_mortgage_modal.render(updater.app),
                 ],
             ),
