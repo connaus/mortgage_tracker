@@ -62,6 +62,7 @@ class Updater:
                 Input(ids.DATA_TYPE_DROPDOWN, "value"),
                 Input(ids.MORTGAGE_EDIT_MODAL_CLOSE, "n_clicks"),
                 Input(ids.MORTGAGE_ADD_MODAL_CLOSE, "n_clicks"),
+                Input(ids.OVERPAYMENT_MODAL_CLOSE, "n_clicks"),
             ],
             [
                 State(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),
@@ -82,6 +83,8 @@ class Updater:
                 State(ids.MORTGAGE_ADD_MODAL_TERM_YEARS, "value"),
                 State(ids.MORTGAGE_ADD_MODAL_TERM_MOTHS, "value"),
                 State(ids.MORTGAGE_ADD_MODAL_PRINCIPLE, "value"),
+                State(ids.OVERPAYMENT_MODAL_DATE, "date"),
+                State(ids.OVERPAYMENT_MODAL_AMOUNT, "value"),
             ],
         )
         def update_line_graph(
@@ -89,6 +92,7 @@ class Updater:
             type: str,
             edit_close_clicks: int,
             add_close_clicks: int,
+            overpayment_close_clicks: int,
             prev: int,
             next: int,
             edit_name: str,
@@ -107,6 +111,8 @@ class Updater:
             add_term_years: int,
             add_term_months: int,
             add_principle: float,
+            overpayment_date: str,
+            overpayment_amount: float,
         ) -> tuple[html.Div, list[html.H4 | html.H6], list[html.H4 | html.H6]]:
             if ctx.triggered_id == ids.MORTGAGE_EDIT_MODAL_CLOSE:
                 mortgage = self.selected_mortgage(next, prev)
@@ -140,6 +146,12 @@ class Updater:
                     principle_at_start=add_principle,
                 )
                 self.data.add_mortgage(mortgage=mortgage)
+
+            if ctx.triggered_id == ids.OVERPAYMENT_MODAL_CLOSE:
+                self.data.add_overpayment(
+                    date=datetime.strptime(overpayment_date, "%Y-%m-%d").replace(day=1),
+                    amount=overpayment_amount,
+                )
 
             record = self.data.payment_record  # will recalculate total record
             if range == "Only Past":

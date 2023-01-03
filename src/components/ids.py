@@ -36,6 +36,12 @@ MORTGAGE_ADD_MODAL_FIXED_TERM_YEARS = "mortgage-add-modal-fixed-term-years"
 MORTGAGE_ADD_MODAL_FIXED_TERM_MOTHS = "mortgage-add-modal-fixed-term-months"
 MORTGAGE_ADD_MODAL_PRINCIPLE = "mortgage-add-modal-principle"
 
+OVERPAYMENT_MODAL = "overpayment-modal"
+OVERPAYMENT_MODAL_OPEN = "overpayment-modal-open"
+OVERPAYMENT_MODAL_CLOSE = "overpayment-modal-close"
+OVERPAYMENT_MODAL_DATE = "overpayment-modal-date"
+OVERPAYMENT_MODAL_AMOUNT = "overpayment-modal-amount"
+
 LINE_CHART = "line-chart"
 
 TOTAL_PAYMENTS = "total-payments"

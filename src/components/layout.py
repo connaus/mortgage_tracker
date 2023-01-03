@@ -13,6 +13,7 @@ from components.modals import (
     edit_mortgage_modal,
     view_mortgage_modal,
     add_mortgage_modal,
+    add_overpayment_modal,
 )
 
 from processor.model_view_link import Updater
@@ -27,26 +28,44 @@ def create_layout(updater: Updater) -> html.Div:
             html.Div(
                 className="dropdown-container",
                 children=[
-                    range_dropdown.render(),
-                    data_dropdown.render(),
+                    range_dropdown.render(
+                        # style={"width": "15%", "display": "inline-block"}
+                        style={"flex": 1}
+                    ),
+                    data_dropdown.render(
+                        # style={"width": "15%", "display": "inline-block"}
+                        style={"flex": 1}
+                    ),
                     view_mortgage_modal.render(
                         updater,
                         style={
-                            "width": "25%",
-                            "display": "inline-block",
+                            # "width": "15%",
+                            # "display": "inline-block",
+                            "flex": 1,
                             "verticalAlign": "bottom",
                         },
                     ),
                     add_mortgage_modal.render(
                         updater,
                         style={
-                            "width": "25%",
-                            "display": "inline-block",
+                            # "width": "15%",
+                            # "display": "inline-block",
+                            "flex": 1,
+                            "verticalAlign": "bottom",
+                        },
+                    ),
+                    add_overpayment_modal.render(
+                        updater,
+                        style={
+                            # "width": "15%",
+                            # "display": "inline-block",
+                            "flex": 1,
                             "verticalAlign": "bottom",
                         },
                     ),
                     edit_mortgage_modal.render(updater.app),
                 ],
+                style={"display": "flex"},
             ),
             line_chart.render(updater.app),
             html.Div(

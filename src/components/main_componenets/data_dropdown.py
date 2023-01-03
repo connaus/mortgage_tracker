@@ -3,7 +3,7 @@ from .. import ids
 from data.mortgage_data import PaymentSchema
 
 
-def render() -> html.Div:
+def render(style: dict = {}) -> html.Div:
     data_types = [
         PaymentSchema.principle_at_start,
         PaymentSchema.interest_owed,
@@ -23,5 +23,5 @@ def render() -> html.Div:
                 clearable=False,
             ),
         ],
-        style={"width": "25%", "display": "inline-block"},
+        style=style,
     )
