@@ -61,6 +61,7 @@ class Updater:
                 Input(ids.PLOT_RANGE_DROPDOWN, "value"),
                 Input(ids.DATA_TYPE_DROPDOWN, "value"),
                 Input(ids.MORTGAGE_EDIT_MODAL_CLOSE, "n_clicks"),
+                Input(ids.MORTGAGE_AGREEMENT_MODAL_DELETE, "n_clicks"),
                 Input(ids.MORTGAGE_ADD_MODAL_CLOSE, "n_clicks"),
                 Input(ids.OVERPAYMENT_MODAL_CLOSE, "n_clicks"),
             ],
@@ -92,6 +93,7 @@ class Updater:
             type: str,
             edit_close_clicks: int,
             add_close_clicks: int,
+            mortgage_delete_clicks: int,
             overpayment_close_clicks: int,
             prev: int,
             next: int,
@@ -114,6 +116,12 @@ class Updater:
             overpayment_date: str,
             overpayment_amount: float,
         ) -> tuple[html.Div, list[html.H4 | html.H6], list[html.H4 | html.H6]]:
+            if ctx.triggered_id == ids.MORTGAGE_AGREEMENT_MODAL_DELETE:
+                print(
+                    f"number of mortgages: {len(self.data.mortgage_list)}, index to pop: {next - prev}"
+                )
+                self.data.mortgage_list.pop(next - prev)
+
             if ctx.triggered_id == ids.MORTGAGE_EDIT_MODAL_CLOSE:
                 mortgage = self.selected_mortgage(next, prev)
                 if edit_name:
