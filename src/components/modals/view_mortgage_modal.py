@@ -1,4 +1,4 @@
-from dash import Dash, html, Output, Input, State
+from dash import html, Output, Input, State
 import dash_bootstrap_components as dbc
 from .. import ids
 from processor.model_view_link import Updater

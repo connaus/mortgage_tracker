@@ -61,6 +61,7 @@ class Updater:
                 Input(ids.PLOT_RANGE_DROPDOWN, "value"),
                 Input(ids.DATA_TYPE_DROPDOWN, "value"),
                 Input(ids.MORTGAGE_EDIT_MODAL_CLOSE, "n_clicks"),
+                Input(ids.MORTGAGE_ADD_MODAL_CLOSE, "n_clicks"),
             ],
             [
                 State(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),
@@ -73,41 +74,72 @@ class Updater:
                 State(ids.MORTGAGE_EDIT_MODAL_TERM_YEARS, "value"),
                 State(ids.MORTGAGE_EDIT_MODAL_TERM_MOTHS, "value"),
                 State(ids.MORTGAGE_EDIT_MODAL_PRINCIPLE, "value"),
+                State(ids.MORTGAGE_ADD_MODAL_NAME, "value"),
+                State(ids.MORTGAGE_ADD_MODAL_RATE, "value"),
+                State(ids.MORTGAGE_ADD_MODAL_START, "date"),
+                State(ids.MORTGAGE_ADD_MODAL_FIXED_TERM_YEARS, "value"),
+                State(ids.MORTGAGE_ADD_MODAL_FIXED_TERM_MOTHS, "value"),
+                State(ids.MORTGAGE_ADD_MODAL_TERM_YEARS, "value"),
+                State(ids.MORTGAGE_ADD_MODAL_TERM_MOTHS, "value"),
+                State(ids.MORTGAGE_ADD_MODAL_PRINCIPLE, "value"),
             ],
         )
         def update_line_graph(
             range: str,
             type: str,
-            n1: int,
+            edit_close_clicks: int,
+            add_close_clicks: int,
             prev: int,
             next: int,
-            name: str,
-            rate: float,
-            start_date: date,
-            fixed_years: int,
-            fixed_months: int,
-            term_years: int,
-            term_months: int,
-            principle: float,
+            edit_name: str,
+            edit_rate: float,
+            edit_start_date: str,
+            edit_fixed_years: int,
+            edit_fixed_months: int,
+            edit_term_years: int,
+            edit_term_months: int,
+            edit_principle: float,
+            add_name: str,
+            add_rate: float,
+            add_start_date: str,
+            add_fixed_years: int,
+            add_fixed_months: int,
+            add_term_years: int,
+            add_term_months: int,
+            add_principle: float,
         ) -> tuple[html.Div, list[html.H4 | html.H6], list[html.H4 | html.H6]]:
             if ctx.triggered_id == ids.MORTGAGE_EDIT_MODAL_CLOSE:
                 mortgage = self.selected_mortgage(next, prev)
-                if name:
-                    mortgage.mortgage_name = name
-                if rate:
-                    mortgage.interest_rate = rate / 100
-                if start_date:
-                    mortgage.start_date = start_date
-                if fixed_years or fixed_months:
+                if edit_name:
+                    mortgage.mortgage_name = edit_name
+                if edit_rate:
+                    mortgage.interest_rate = edit_rate / 100
+                if edit_start_date:
+                    mortgage.start_date = datetime.strptime(edit_start_date, "%Y-%m-%d")
+                if edit_fixed_years or edit_fixed_months:
                     mortgage.fixed_term = (
-                        (fixed_years if fixed_years else 0) * 12
-                    ) + fixed_months
-                if term_years or term_months:
+                        (edit_fixed_years if edit_fixed_years else 0) * 12
+                    ) + edit_fixed_months
+                if edit_term_years or edit_term_months:
                     mortgage.term = (
-                        (term_years if term_years else 0) * 12
-                    ) + term_months
-                if principle:
-                    mortgage.principle_at_start = principle
+                        (edit_term_years if edit_term_years else 0) * 12
+                    ) + edit_term_months
+                if edit_principle:
+                    mortgage.principle_at_start = edit_principle
+
+            if ctx.triggered_id == ids.MORTGAGE_ADD_MODAL_CLOSE:
+                mortgage = MortgageAgreement(
+                    start_year=datetime.strptime(add_start_date, "%Y-%m-%d").year,
+                    start_month=datetime.strptime(add_start_date, "%Y-%m-%d").month,
+                    mortgage_name=add_name,
+                    interest_rate=int(add_rate) / 100,
+                    term=((add_term_years if add_term_years else 0) * 12)
+                    + add_term_months,
+                    fixed_term=((add_fixed_years if add_fixed_years else 0) * 12)
+                    + add_fixed_months,
+                    principle_at_start=add_principle,
+                )
+                self.data.add_mortgage(mortgage=mortgage)
 
             record = self.data.payment_record  # will recalculate total record
             if range == "Only Past":

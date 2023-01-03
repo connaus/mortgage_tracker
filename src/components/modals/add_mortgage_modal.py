@@ -64,6 +64,7 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
                                             + relativedelta(months=1),
                                             style={"flex": 1},
                                             number_of_months_shown=3,
+                                            display_format="MMM YYYY",
                                         ),
                                     ],
                                     style={"display": "flex"},
