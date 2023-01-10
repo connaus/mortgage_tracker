@@ -120,7 +120,6 @@ class Updater:
             html.Div, list[html.H4 | html.H6], list[html.H4 | html.H6], int, int
         ]:
             if ctx.triggered_id == ids.MORTGAGE_AGREEMENT_MODAL_DELETE:
-                print("Main callback called now")
                 index = next - prev
                 self.data.mortgage_list.pop(next - prev)
                 prev = 0
