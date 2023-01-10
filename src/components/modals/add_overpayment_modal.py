@@ -7,12 +7,12 @@ from processor.model_view_link import Updater
 
 def render(updater: Updater, style: dict = {}) -> html.Div:
     @updater.app.callback(
-        Output(ids.OVERPAYMENT_MODAL, "is_open"),
+        Output(ids.ADD_OVERPAYMENT_MODAL, "is_open"),
         [
-            Input(ids.OVERPAYMENT_MODAL_OPEN, "n_clicks"),
-            Input(ids.OVERPAYMENT_MODAL_CLOSE, "n_clicks"),
+            Input(ids.ADD_OVERPAYMENT_MODAL_OPEN, "n_clicks"),
+            Input(ids.ADD_OVERPAYMENT_MODAL_CLOSE, "n_clicks"),
         ],
-        [State(ids.OVERPAYMENT_MODAL, "is_open")],
+        [State(ids.ADD_OVERPAYMENT_MODAL, "is_open")],
     )
     def open_modal(n1, n2, is_open) -> bool:
         """opens modal when the edit button on the view mortgage modal is clicked
@@ -26,7 +26,7 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
             [
                 dbc.Button(
                     "Add New Overpayment",
-                    id=ids.OVERPAYMENT_MODAL_OPEN,
+                    id=ids.ADD_OVERPAYMENT_MODAL_OPEN,
                     n_clicks=0,
                 ),
                 dbc.Modal(
@@ -37,7 +37,7 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
                                 html.Div(dbc.Label("Date:")),  # , style={"flex": 1}),
                                 html.Div(
                                     dcc.DatePickerSingle(
-                                        id=ids.OVERPAYMENT_MODAL_DATE,
+                                        id=ids.ADD_OVERPAYMENT_MODAL_DATE,
                                         date=date.today(),
                                         style={"flex": 1},
                                         number_of_months_shown=3,
@@ -48,7 +48,7 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
                                 html.Div(dbc.Label("Overpayment Amount:")),
                                 html.Div(
                                     dbc.Input(
-                                        id=ids.OVERPAYMENT_MODAL_AMOUNT,
+                                        id=ids.ADD_OVERPAYMENT_MODAL_AMOUNT,
                                         type="number",
                                         debounce=True,
                                         required=True,
@@ -60,13 +60,13 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
                         dbc.ModalFooter(
                             dbc.Button(
                                 "Save and Close",
-                                id=ids.OVERPAYMENT_MODAL_CLOSE,
+                                id=ids.ADD_OVERPAYMENT_MODAL_CLOSE,
                                 class_name="ms-auto",
                                 n_clicks=0,
                             ),
                         ),
                     ],
-                    id=ids.OVERPAYMENT_MODAL,
+                    id=ids.ADD_OVERPAYMENT_MODAL,
                     is_open=False,
                 ),
             ]

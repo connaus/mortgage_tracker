@@ -64,7 +64,7 @@ class Updater:
                 Input(ids.MORTGAGE_EDIT_MODAL_CLOSE, "n_clicks"),
                 Input(ids.MORTGAGE_AGREEMENT_MODAL_DELETE, "n_clicks"),
                 Input(ids.MORTGAGE_ADD_MODAL_CLOSE, "n_clicks"),
-                Input(ids.OVERPAYMENT_MODAL_CLOSE, "n_clicks"),
+                Input(ids.ADD_OVERPAYMENT_MODAL_CLOSE, "n_clicks"),
             ],
             [
                 State(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),
@@ -85,8 +85,8 @@ class Updater:
                 State(ids.MORTGAGE_ADD_MODAL_TERM_YEARS, "value"),
                 State(ids.MORTGAGE_ADD_MODAL_TERM_MOTHS, "value"),
                 State(ids.MORTGAGE_ADD_MODAL_PRINCIPLE, "value"),
-                State(ids.OVERPAYMENT_MODAL_DATE, "date"),
-                State(ids.OVERPAYMENT_MODAL_AMOUNT, "value"),
+                State(ids.ADD_OVERPAYMENT_MODAL_DATE, "date"),
+                State(ids.ADD_OVERPAYMENT_MODAL_AMOUNT, "value"),
             ],
         )
         def update_line_graph(
@@ -158,7 +158,7 @@ class Updater:
                 )
                 self.data.add_mortgage(mortgage=mortgage)
 
-            if ctx.triggered_id == ids.OVERPAYMENT_MODAL_CLOSE:
+            if ctx.triggered_id == ids.ADD_OVERPAYMENT_MODAL_CLOSE:
                 self.data.add_overpayment(
                     date=datetime.strptime(overpayment_date, "%Y-%m-%d").replace(day=1),
                     amount=overpayment_amount,
@@ -196,8 +196,10 @@ class Updater:
                 Input(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),
                 Input(
                     ids.MORTGAGE_AGREEMENT_MODAL_DELETE, "n_clicks"
-                ),  # required to updatetext when mortgage is deleted.
-                Input(ids.MORTGAGE_EDIT_MODAL_CLOSE, "n_clicks"),
+                ),  # required to update text when mortgage is deleted.
+                Input(
+                    ids.MORTGAGE_EDIT_MODAL_CLOSE, "n_clicks"
+                ),  # required to update text when mortgage is edited
             ],
         )
         def update_modal_text(next: int, prev: int, _: int, __: int) -> list[html.Div]:

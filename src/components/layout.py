@@ -14,6 +14,7 @@ from components.modals import (
     view_mortgage_modal,
     add_mortgage_modal,
     add_overpayment_modal,
+    view_overpayment_modal,
 )
 
 from processor.model_view_link import Updater
@@ -31,6 +32,13 @@ def create_layout(updater: Updater) -> html.Div:
                     range_dropdown.render(style={"flex": 1}),
                     data_dropdown.render(style={"flex": 1}),
                     view_mortgage_modal.render(
+                        updater,
+                        style={
+                            "flex": 1,
+                            "verticalAlign": "bottom",
+                        },
+                    ),
+                    view_overpayment_modal.render(
                         updater,
                         style={
                             "flex": 1,
