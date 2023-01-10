@@ -28,28 +28,11 @@ def create_layout(updater: Updater) -> html.Div:
             html.Div(
                 className="dropdown-container",
                 children=[
-                    range_dropdown.render(
-                        # style={"width": "15%", "display": "inline-block"}
-                        style={"flex": 1}
-                    ),
-                    data_dropdown.render(
-                        # style={"width": "15%", "display": "inline-block"}
-                        style={"flex": 1}
-                    ),
+                    range_dropdown.render(style={"flex": 1}),
+                    data_dropdown.render(style={"flex": 1}),
                     view_mortgage_modal.render(
                         updater,
                         style={
-                            # "width": "15%",
-                            # "display": "inline-block",
-                            "flex": 1,
-                            "verticalAlign": "bottom",
-                        },
-                    ),
-                    add_mortgage_modal.render(
-                        updater,
-                        style={
-                            # "width": "15%",
-                            # "display": "inline-block",
                             "flex": 1,
                             "verticalAlign": "bottom",
                         },
@@ -57,11 +40,12 @@ def create_layout(updater: Updater) -> html.Div:
                     add_overpayment_modal.render(
                         updater,
                         style={
-                            # "width": "15%",
-                            # "display": "inline-block",
                             "flex": 1,
                             "verticalAlign": "bottom",
                         },
+                    ),
+                    add_mortgage_modal.render(
+                        updater,
                     ),
                     edit_mortgage_modal.render(updater.app),
                 ],

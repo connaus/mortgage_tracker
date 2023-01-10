@@ -50,12 +50,13 @@ class Updater:
 
     def run(self):
         # updates line graph and total boxes when mortgages are added or edited, or drop down selection is changed.
-        # TODO: add update to totals
         @self.app.callback(
             [
                 Output(ids.LINE_CHART, "children"),
                 Output(ids.TOTAL_PAYMENTS, "children"),
                 Output(ids.TOTAL_INTEREST_PAYMENTS, "children"),
+                Output(ids.MORTGAGE_AGREEMENT_MODAL_NEXT, "n_clicks"),
+                Output(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),
             ],
             [
                 Input(ids.PLOT_RANGE_DROPDOWN, "value"),
@@ -115,12 +116,15 @@ class Updater:
             add_principle: float,
             overpayment_date: str,
             overpayment_amount: float,
-        ) -> tuple[html.Div, list[html.H4 | html.H6], list[html.H4 | html.H6]]:
+        ) -> tuple[
+            html.Div, list[html.H4 | html.H6], list[html.H4 | html.H6], int, int
+        ]:
             if ctx.triggered_id == ids.MORTGAGE_AGREEMENT_MODAL_DELETE:
-                print(
-                    f"number of mortgages: {len(self.data.mortgage_list)}, index to pop: {next - prev}"
-                )
+                print("Main callback called now")
+                index = next - prev
                 self.data.mortgage_list.pop(next - prev)
+                prev = 0
+                next = index - 1 if index != 0 else 0
 
             if ctx.triggered_id == ids.MORTGAGE_EDIT_MODAL_CLOSE:
                 mortgage = self.selected_mortgage(next, prev)
@@ -181,6 +185,8 @@ class Updater:
                 html.Div(dcc.Graph(figure=fig), id=ids.LINE_CHART),
                 self.update_payment_text(range),
                 self.update_interest_text(range),
+                next,
+                prev,
             )
 
         # determines the text for the mortgage display modal
@@ -189,9 +195,13 @@ class Updater:
             [
                 Input(ids.MORTGAGE_AGREEMENT_MODAL_NEXT, "n_clicks"),
                 Input(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),
+                Input(
+                    ids.MORTGAGE_AGREEMENT_MODAL_DELETE, "n_clicks"
+                ),  # required to updatetext when mortgage is deleted.
+                Input(ids.MORTGAGE_EDIT_MODAL_CLOSE, "n_clicks"),
             ],
         )
-        def update_modal_text(next: int, prev: int) -> list[html.Div]:
+        def update_modal_text(next: int, prev: int, _: int, __: int) -> list[html.Div]:
             return [
                 html.Div(line)
                 for line in self.selected_mortgage(next, prev).display().split("\n")
