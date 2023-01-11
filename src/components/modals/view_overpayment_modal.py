@@ -46,6 +46,16 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
             return not is_open
         return is_open
 
+    @updater.app.callback(
+        Output(ids.OVERPAYMENT_MODAL_BODY, "children"),
+        [
+            Input(ids.OVERPAYMENT_MODAL_OPEN, "n_clicks"),
+            Input(ids.ADD_OVERPAYMENT_MODAL_CLOSE, "n_clicks"),
+        ],
+    )
+    def update_modal_text(n1, n2) -> list[html.Div]:
+        return build_overpayment_text(updater=updater)
+
     return html.Div(
         children=html.Div(
             [
@@ -57,7 +67,10 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
                 dbc.Modal(
                     [
                         dbc.ModalHeader(dbc.ModalTitle("Overpayments")),
-                        dbc.ModalBody(build_overpayment_text(updater=updater)),
+                        dbc.ModalBody(
+                            build_overpayment_text(updater=updater),
+                            id=ids.OVERPAYMENT_MODAL_BODY,
+                        ),
                         dbc.ModalFooter(
                             [
                                 dbc.Button(

@@ -9,7 +9,7 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
     @updater.app.callback(
         Output(ids.ADD_OVERPAYMENT_MODAL, "is_open"),
         [
-            Input(ids.ADD_OVERPAYMENT_MODAL_OPEN, "n_clicks"),
+            Input(ids.OVERPAYMENT_MODAL_ADD, "n_clicks"),
             Input(ids.ADD_OVERPAYMENT_MODAL_CLOSE, "n_clicks"),
         ],
         [State(ids.ADD_OVERPAYMENT_MODAL, "is_open")],
@@ -24,11 +24,11 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
     return html.Div(
         children=html.Div(
             [
-                dbc.Button(
-                    "Add New Overpayment",
-                    id=ids.ADD_OVERPAYMENT_MODAL_OPEN,
-                    n_clicks=0,
-                ),
+                # dbc.Button(
+                #     "Add New Overpayment",
+                #     id=ids.ADD_OVERPAYMENT_MODAL_OPEN,
+                #     n_clicks=0,
+                # ),
                 dbc.Modal(
                     [
                         dbc.ModalHeader(dbc.ModalTitle("Add Overpayment")),
