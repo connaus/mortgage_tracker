@@ -5,7 +5,7 @@ from .. import ids
 from processor.model_view_link import Updater
 
 
-def render(updater: Updater, style: dict = {}) -> html.Div:
+def render(updater: Updater, style: dict = {}) -> dbc.Modal:
     @updater.app.callback(
         Output(ids.ADD_OVERPAYMENT_MODAL, "is_open"),
         [
@@ -21,55 +21,42 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
             return not is_open
         return is_open
 
-    return html.Div(
-        children=html.Div(
-            [
-                # dbc.Button(
-                #     "Add New Overpayment",
-                #     id=ids.ADD_OVERPAYMENT_MODAL_OPEN,
-                #     n_clicks=0,
-                # ),
-                dbc.Modal(
-                    [
-                        dbc.ModalHeader(dbc.ModalTitle("Add Overpayment")),
-                        dbc.ModalBody(
-                            [
-                                html.Div(dbc.Label("Date:")),  # , style={"flex": 1}),
-                                html.Div(
-                                    dcc.DatePickerSingle(
-                                        id=ids.ADD_OVERPAYMENT_MODAL_DATE,
-                                        date=date.today(),
-                                        style={"flex": 1},
-                                        number_of_months_shown=3,
-                                        display_format="MMM YYYY",
-                                    ),
-                                    # style={"display": "flex"},
-                                ),
-                                html.Div(dbc.Label("Overpayment Amount:")),
-                                html.Div(
-                                    dbc.Input(
-                                        id=ids.ADD_OVERPAYMENT_MODAL_AMOUNT,
-                                        type="number",
-                                        debounce=True,
-                                        required=True,
-                                        style={"flex": 1},
-                                    )
-                                ),
-                            ]
+    return dbc.Modal(
+        [
+            dbc.ModalHeader(dbc.ModalTitle("Add Overpayment")),
+            dbc.ModalBody(
+                [
+                    html.Div(dbc.Label("Date:")),
+                    html.Div(
+                        dcc.DatePickerSingle(
+                            id=ids.ADD_OVERPAYMENT_MODAL_DATE,
+                            date=date.today(),
+                            style={"flex": 1},
+                            number_of_months_shown=3,
+                            display_format="MMM YYYY",
                         ),
-                        dbc.ModalFooter(
-                            dbc.Button(
-                                "Save and Close",
-                                id=ids.ADD_OVERPAYMENT_MODAL_CLOSE,
-                                class_name="ms-auto",
-                                n_clicks=0,
-                            ),
-                        ),
-                    ],
-                    id=ids.ADD_OVERPAYMENT_MODAL,
-                    is_open=False,
+                    ),
+                    html.Div(dbc.Label("Overpayment Amount:")),
+                    html.Div(
+                        dbc.Input(
+                            id=ids.ADD_OVERPAYMENT_MODAL_AMOUNT,
+                            type="number",
+                            debounce=True,
+                            required=True,
+                            style={"flex": 1},
+                        )
+                    ),
+                ]
+            ),
+            dbc.ModalFooter(
+                dbc.Button(
+                    "Save and Close",
+                    id=ids.ADD_OVERPAYMENT_MODAL_CLOSE,
+                    class_name="ms-auto",
+                    n_clicks=0,
                 ),
-            ]
-        ),
-        style=style,
+            ),
+        ],
+        id=ids.ADD_OVERPAYMENT_MODAL,
+        is_open=False,
     )
