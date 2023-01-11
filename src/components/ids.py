@@ -45,6 +45,8 @@ ADD_OVERPAYMENT_MODAL_AMOUNT = "add-overpayment-modal-amount"
 
 OVERPAYMENT_MODAL = "overpayment-modal"
 OVERPAYMENT_MODAL_OPEN = "overpayment-modal-open"
+OVERPAYMENT_MODAL_ADD = "overpayment-modal-add"
+OVERPAYMENT_MODAL_CLOSE = "overpayment-modal-close"
 
 LINE_CHART = "line-chart"
 

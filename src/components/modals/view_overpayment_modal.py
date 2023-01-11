@@ -11,19 +11,38 @@ def build_overpayment_text(updater: Updater) -> list[html.Div]:
     overpayments = overpayments[overpayments != 0]
     output = []
     for idx, payment in overpayments.items():
-        output.append(html.Div(f'{idx.strftime("%Y %B")}\t€{payment:,.2f}'))
+        output.append(
+            html.Div(
+                [
+                    html.Div(
+                        f'{idx.strftime("%Y %B")}:',
+                        style={"flex": 1, "text-align": "right"},
+                    ),
+                    html.Div(style={"flex": 0.5}),
+                    html.Div(
+                        f"€{payment:,.2f}",
+                        style={"flex": 1, "text-align": "left"},
+                    ),
+                ],
+                style={"display": "flex"},
+            )
+        )
 
+    output.reverse()
     return output
 
 
 def render(updater: Updater, style: dict = {}) -> html.Div:
     @updater.app.callback(
         Output(ids.OVERPAYMENT_MODAL, "is_open"),
-        Input(ids.OVERPAYMENT_MODAL_OPEN, "n_clicks"),
+        [
+            Input(ids.OVERPAYMENT_MODAL_OPEN, "n_clicks"),
+            Input(ids.OVERPAYMENT_MODAL_CLOSE, "n_clicks"),
+        ],
         [State(ids.OVERPAYMENT_MODAL, "is_open")],
     )
-    def toggle_modal(n1, is_open) -> bool:
-        if n1:
+    def toggle_modal(n1, n2, is_open) -> bool:
+        if n1 or n2:
             return not is_open
         return is_open
 
@@ -39,9 +58,27 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
                     [
                         dbc.ModalHeader(dbc.ModalTitle("Overpayments")),
                         dbc.ModalBody(build_overpayment_text(updater=updater)),
+                        dbc.ModalFooter(
+                            [
+                                dbc.Button(
+                                    "Add/Edit Entry",
+                                    id=ids.OVERPAYMENT_MODAL_ADD,
+                                    n_clicks=0,
+                                    style={"flex": 1},
+                                ),
+                                dbc.Button(
+                                    "Close",
+                                    id=ids.OVERPAYMENT_MODAL_CLOSE,
+                                    n_clicks=0,
+                                    style={"flex": 1},
+                                ),
+                            ],
+                            style={"display": "flex"},
+                        ),
                     ],
                     id=ids.OVERPAYMENT_MODAL,
                     is_open=False,
+                    scrollable=True,
                 ),
             ]
         ),
