@@ -2,7 +2,7 @@ from dash import html, dcc
 from .. import ids
 
 
-def render() -> html.Div:
+def render(style: dict = {}) -> html.Div:
     plot_range = ["Only Past", "Mortgage Agreements", "Future Projection"]
     return html.Div(
         children=[
@@ -15,5 +15,5 @@ def render() -> html.Div:
                 clearable=False,
             ),
         ],
-        style={"width": "25%", "display": "inline-block"},
+        style=style,
     )

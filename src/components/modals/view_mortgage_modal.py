@@ -1,10 +1,11 @@
-from dash import Dash, html, Output, Input, State
+from dash import html, Output, Input, State
 import dash_bootstrap_components as dbc
 from .. import ids
+from processor.model_view_link import Updater
 
 
-def render(app: Dash) -> html.Div:
-    @app.callback(
+def render(updater: Updater, style: dict = {}) -> html.Div:
+    @updater.app.callback(
         Output(ids.MORTGAGE_AGREEMENT_MODAL, "is_open"),
         Input(ids.MORTGAGE_AGREEMENT_MODAL_OPEN, "n_clicks"),
         [State(ids.MORTGAGE_AGREEMENT_MODAL, "is_open")],
@@ -14,7 +15,7 @@ def render(app: Dash) -> html.Div:
             return not is_open
         return is_open
 
-    @app.callback(
+    @updater.app.callback(
         Output(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "disabled"),
         [
             Input(ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS, "n_clicks"),
@@ -30,9 +31,10 @@ def render(app: Dash) -> html.Div:
         children=html.Div(
             [
                 dbc.Button(
-                    "Open Mortgage Details",
+                    "View/Edit Mortgages",
                     id=ids.MORTGAGE_AGREEMENT_MODAL_OPEN,
                     n_clicks=0,
+                    style={"width": "100%"},
                 ),
                 dbc.Modal(
                     [
@@ -46,24 +48,37 @@ def render(app: Dash) -> html.Div:
                                 dbc.Button(
                                     "Previous",
                                     id=ids.MORTGAGE_AGREEMENT_MODAL_PREVIOUS,
-                                    class_name="ms-auto",
                                     n_clicks=0,
                                     disabled=True,
+                                    style={"flex": 1},
+                                ),
+                                dbc.Button(
+                                    "New",
+                                    id=ids.MORTGAGE_ADD_MODAL_OPEN,
+                                    n_clicks=0,
+                                    style={"flex": 1},
                                 ),
                                 dbc.Button(
                                     "Edit",
                                     id=ids.MORTGAGE_AGREEMENT_MODAL_EDIT,
-                                    class_name="ms-auto",
                                     n_clicks=0,
+                                    style={"flex": 1},
+                                ),
+                                dbc.Button(
+                                    "Delete",
+                                    id=ids.MORTGAGE_AGREEMENT_MODAL_DELETE,
+                                    n_clicks=0,
+                                    style={"flex": 1},
                                 ),
                                 dbc.Button(
                                     "Next",
                                     id=ids.MORTGAGE_AGREEMENT_MODAL_NEXT,
-                                    class_name="ms-auto",
                                     n_clicks=0,
                                     disabled=False,
+                                    style={"flex": 1},
                                 ),
-                            ]
+                            ],
+                            style={"display": "flex"},
                         ),
                     ],
                     id=ids.MORTGAGE_AGREEMENT_MODAL,
@@ -71,5 +86,5 @@ def render(app: Dash) -> html.Div:
                 ),
             ],
         ),
-        style={"width": "25%", "display": "inline-block", "verticalAlign": "bottom"},
+        style=style,
     )
