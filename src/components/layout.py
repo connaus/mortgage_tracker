@@ -27,35 +27,30 @@ def create_layout(updater: Updater) -> html.Div:
             html.H1(updater.app.title),
             html.Hr(),
             html.Div(
-                className="dropdown-container",
                 children=[
                     range_dropdown.render(style={"flex": 1}),
                     data_dropdown.render(style={"flex": 1}),
-                    view_mortgage_modal.render(
-                        updater,
-                        style={
-                            "flex": 1,
-                            "verticalAlign": "bottom",
-                        },
+                    html.Div(
+                        [
+                            view_mortgage_modal.render(
+                                updater,
+                            ),
+                            view_overpayment_modal.render(
+                                updater,
+                            ),
+                            add_overpayment_modal.render(
+                                updater,
+                                style={
+                                    "verticalAlign": "bottom",
+                                },
+                            ),
+                            add_mortgage_modal.render(
+                                updater,
+                            ),
+                            edit_mortgage_modal.render(updater.app),
+                        ],
+                        className="d-grid gap-2",
                     ),
-                    view_overpayment_modal.render(
-                        updater,
-                        style={
-                            "flex": 1,
-                            "verticalAlign": "bottom",
-                        },
-                    ),
-                    add_overpayment_modal.render(
-                        updater,
-                        style={
-                            "flex": 1,
-                            "verticalAlign": "bottom",
-                        },
-                    ),
-                    add_mortgage_modal.render(
-                        updater,
-                    ),
-                    edit_mortgage_modal.render(updater.app),
                 ],
                 style={"display": "flex"},
             ),

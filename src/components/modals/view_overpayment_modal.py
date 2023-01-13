@@ -63,6 +63,7 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
                     "View/Edit Overpayments",
                     id=ids.OVERPAYMENT_MODAL_OPEN,
                     n_clicks=0,
+                    style={"width": "100%"},
                 ),
                 dbc.Modal(
                     [

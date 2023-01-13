@@ -34,6 +34,7 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
                     "View/Edit Mortgages",
                     id=ids.MORTGAGE_AGREEMENT_MODAL_OPEN,
                     n_clicks=0,
+                    style={"width": "100%"},
                 ),
                 dbc.Modal(
                     [
@@ -85,5 +86,5 @@ def render(updater: Updater, style: dict = {}) -> html.Div:
                 ),
             ],
         ),
-        style={"width": "25%", "display": "inline-block", "verticalAlign": "bottom"},
+        style=style,
     )
